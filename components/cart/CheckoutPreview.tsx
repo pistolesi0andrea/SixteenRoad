@@ -5,6 +5,8 @@ import Link from "next/link";
 import { useState, type ReactNode } from "react";
 import { useCart } from "@/components/cart/CartProvider";
 import { isGiftCardCartLine } from "@/lib/product-helpers";
+import { CartLineItem } from "@/types/cart";
+import { ShopifyCheckoutDeliveryMode, ShopifyStoreAvailability } from "@/types/shopify";
 
 type PaymentMethod = "card" | "paypal" | "scalapay";
 
@@ -79,6 +81,26 @@ const SHIPPING_OPTIONS = [
   },
 ];
 
+function getCommonPickupLocations(items: CartLineItem[]): ShopifyStoreAvailability[] {
+  const physicalItems = items.filter((item) => !isGiftCardCartLine(item));
+
+  if (physicalItems.length === 0) {
+    return [];
+  }
+
+  return physicalItems.reduce<ShopifyStoreAvailability[]>((locations, item, index) => {
+    const availableLocations = item.pickupLocations.filter((location) => location.available);
+
+    if (index === 0) {
+      return availableLocations;
+    }
+
+    return locations.filter((location) =>
+      availableLocations.some((candidate) => candidate.location.id === location.location.id),
+    );
+  }, []);
+}
+
 export function CheckoutPreview() {
   const {
     items,
@@ -97,6 +119,7 @@ export function CheckoutPreview() {
     isUsingShopify,
   } = useCart();
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>("card");
+  const [deliveryMode, setDeliveryMode] = useState<ShopifyCheckoutDeliveryMode>("shipping");
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [discountCodeDraft, setDiscountCodeDraft] = useState<string | null>(null);
   const [formData, setFormData] = useState({
@@ -112,14 +135,20 @@ export function CheckoutPreview() {
 
   const currencyCode = items[0]?.price.currencyCode ?? "EUR";
   const isDigitalGiftCardOrder = items.length > 0 && items.every((item) => isGiftCardCartLine(item));
-  const shippingPrice = isDigitalGiftCardOrder ? 0 : 5;
+  const pickupLocations = getCommonPickupLocations(items);
+  const canUsePickup = !isDigitalGiftCardOrder && pickupLocations.length > 0;
+  const effectiveDeliveryMode: ShopifyCheckoutDeliveryMode = canUsePickup ? deliveryMode : "shipping";
+  const shippingPrice = isDigitalGiftCardOrder || effectiveDeliveryMode === "pickup" ? 0 : 5;
   const discountedSubtotal = Math.max(subtotal - discountAmount, 0);
   const total = discountedSubtotal + shippingPrice;
   const appliedDiscountCode = discountCodes.find((discountCode) => discountCode.applicable) ?? null;
   const invalidDiscountCode = discountCodes.find((discountCode) => !discountCode.applicable) ?? null;
   const discountCodeInput = discountCodeDraft ?? appliedDiscountCode?.code ?? "";
-
-  const summaryLabel = isDigitalGiftCardOrder ? "Consegna digitale" : "Spedizione Italia";
+  const summaryLabel = isDigitalGiftCardOrder
+    ? "Consegna digitale"
+    : effectiveDeliveryMode === "pickup"
+      ? "Ritiro in store"
+      : "Spedizione Italia";
 
   function updateField(field: keyof typeof formData, value: string) {
     setFormData((current) => ({
@@ -135,7 +164,7 @@ export function CheckoutPreview() {
     try {
       const checkout = await beginCheckout({
         ...formData,
-        deliveryMode: "shipping",
+        deliveryMode: isDigitalGiftCardOrder ? "shipping" : effectiveDeliveryMode,
       });
 
       if (checkout.mode === "shopify") {
@@ -263,14 +292,12 @@ export function CheckoutPreview() {
           <section className="border border-brand-border bg-brand-cream px-5 py-5 sm:px-6 sm:py-6">
             <div>
               <div className="text-[11px] uppercase tracking-[0.24em] text-brand-burnt">
-                {isDigitalGiftCardOrder ? "Consegna gift card" : "Spedizione"}
+                {isDigitalGiftCardOrder ? "Consegna gift card" : "Consegna"}
               </div>
               <p className="mt-3 max-w-[620px] text-[15px] leading-[1.9] text-brand-dust">
                 {isDigitalGiftCardOrder
                   ? "Il buono regalo viene consegnato digitalmente dopo il pagamento. Non vengono applicati costi di spedizione."
-                  : isShopifyReady
-                    ? "Questo step aggiorna buyer identity e indirizzo di spedizione del carrello Shopify prima del redirect al checkoutUrl."
-                    : "Nella versione live questo step usera le spedizioni configurate in Shopify prima del redirect al checkout."}
+                  : "Scegli se ricevere l'ordine a casa oppure pagare online e ritirarlo in store senza costi di spedizione."}
               </p>
             </div>
 
@@ -291,55 +318,138 @@ export function CheckoutPreview() {
                 </div>
               ) : (
                 <>
-                  <div className="grid grid-cols-1 gap-3 md:grid-cols-3">
-                    <input
-                      type="text"
-                      required
-                      value={formData.address}
-                      onChange={(event) => updateField("address", event.target.value)}
-                      placeholder="Indirizzo"
-                      className="md:col-span-2 h-[58px] border border-brand-border bg-white px-4 text-[16px] text-brand-dark-brown outline-none placeholder:text-brand-dust"
-                    />
-                    <input
-                      type="text"
-                      required
-                      value={formData.postalCode}
-                      onChange={(event) => updateField("postalCode", event.target.value)}
-                      placeholder="CAP"
-                      className="h-[58px] border border-brand-border bg-white px-4 text-[16px] text-brand-dark-brown outline-none placeholder:text-brand-dust"
-                    />
-                  </div>
-                  <input
-                    type="text"
-                    required
-                    value={formData.city}
-                    onChange={(event) => updateField("city", event.target.value)}
-                    placeholder="Citta"
-                    className="h-[58px] border border-brand-border bg-white px-4 text-[16px] text-brand-dark-brown outline-none placeholder:text-brand-dust"
-                  />
-
                   <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-                    {SHIPPING_OPTIONS.map((option) => {
-                      return (
-                        <div
-                          key={option.id}
-                          className="border border-brand-dark-brown bg-brand-dark-brown px-5 py-5 text-brand-cream"
-                        >
-                          <div className="flex items-start justify-between gap-4">
-                            <div>
-                              <div className="text-[14px] uppercase tracking-[0.14em]">
-                                {option.label}
-                              </div>
-                              <p className="mt-3 text-[14px] leading-[1.8] text-brand-cream">
-                                {option.detail}
-                              </p>
-                            </div>
-                            <div className="text-[16px]">{formatPrice(option.price)}</div>
+                    <button
+                      type="button"
+                      onClick={() => setDeliveryMode("shipping")}
+                      className={`border px-5 py-5 text-left transition-colors ${
+                        effectiveDeliveryMode === "shipping"
+                          ? "border-brand-dark-brown bg-brand-dark-brown text-brand-cream"
+                          : "border-brand-border bg-white text-brand-dark-brown hover:bg-brand-parchment"
+                      }`}
+                    >
+                      <div className="flex items-start justify-between gap-4">
+                        <div>
+                          <div className="text-[14px] uppercase tracking-[0.14em]">
+                            Spedizione Italia
                           </div>
+                          <p
+                            className={`mt-3 text-[14px] leading-[1.8] ${
+                              effectiveDeliveryMode === "shipping"
+                                ? "text-brand-cream"
+                                : "text-brand-dust"
+                            }`}
+                          >
+                            Ordini entro le 13:00 spediti in giornata.
+                          </p>
                         </div>
-                      );
-                    })}
+                        <div className="text-[16px]">{formatPrice(5, currencyCode)}</div>
+                      </div>
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => canUsePickup && setDeliveryMode("pickup")}
+                      disabled={!canUsePickup}
+                      className={`border px-5 py-5 text-left transition-colors ${
+                        effectiveDeliveryMode === "pickup"
+                          ? "border-brand-dark-brown bg-brand-dark-brown text-brand-cream"
+                          : canUsePickup
+                            ? "border-brand-border bg-white text-brand-dark-brown hover:bg-brand-parchment"
+                            : "cursor-not-allowed border-brand-border bg-white text-brand-dust opacity-60"
+                      }`}
+                    >
+                      <div className="flex items-start justify-between gap-4">
+                        <div>
+                          <div className="text-[14px] uppercase tracking-[0.14em]">
+                            Ritira in store
+                          </div>
+                          <p
+                            className={`mt-3 text-[14px] leading-[1.8] ${
+                              effectiveDeliveryMode === "pickup" ? "text-brand-cream" : "text-brand-dust"
+                            }`}
+                          >
+                            {canUsePickup
+                              ? "Paghi online e ritiri in boutique senza costi di spedizione."
+                              : "Ritiro non disponibile per tutti gli articoli del carrello."}
+                          </p>
+                        </div>
+                        <div className="text-[16px]">{formatPrice(0, currencyCode)}</div>
+                      </div>
+                    </button>
                   </div>
+
+                  {effectiveDeliveryMode === "pickup" && canUsePickup ? (
+                    <div className="border border-brand-border bg-white px-5 py-5 text-brand-dark-brown">
+                      <div className="text-[14px] uppercase tracking-[0.14em]">Boutique disponibili</div>
+                      <div className="mt-3 space-y-2 text-[14px] leading-[1.8] text-brand-dust">
+                        {pickupLocations.map((location) => (
+                          <p key={location.location.id}>
+                            {location.location.name}
+                            {location.pickUpTime ? ` - ${location.pickUpTime}` : ""}
+                          </p>
+                        ))}
+                      </div>
+                      <p className="mt-4 text-[14px] leading-[1.8] text-brand-dust">
+                        Nel checkout Shopify vedrai l&apos;opzione di ritiro e potrai finalizzare il
+                        pagamento online prima di passare in negozio.
+                      </p>
+                    </div>
+                  ) : null}
+
+                  {effectiveDeliveryMode === "shipping" ? (
+                    <>
+                      <div className="grid grid-cols-1 gap-3 md:grid-cols-3">
+                        <input
+                          type="text"
+                          required
+                          value={formData.address}
+                          onChange={(event) => updateField("address", event.target.value)}
+                          placeholder="Indirizzo"
+                          className="md:col-span-2 h-[58px] border border-brand-border bg-white px-4 text-[16px] text-brand-dark-brown outline-none placeholder:text-brand-dust"
+                        />
+                        <input
+                          type="text"
+                          required
+                          value={formData.postalCode}
+                          onChange={(event) => updateField("postalCode", event.target.value)}
+                          placeholder="CAP"
+                          className="h-[58px] border border-brand-border bg-white px-4 text-[16px] text-brand-dark-brown outline-none placeholder:text-brand-dust"
+                        />
+                      </div>
+                      <input
+                        type="text"
+                        required
+                        value={formData.city}
+                        onChange={(event) => updateField("city", event.target.value)}
+                        placeholder="Citta"
+                        className="h-[58px] border border-brand-border bg-white px-4 text-[16px] text-brand-dark-brown outline-none placeholder:text-brand-dust"
+                      />
+
+                      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                        {SHIPPING_OPTIONS.map((option) => {
+                          return (
+                            <div
+                              key={option.id}
+                              className="border border-brand-dark-brown bg-brand-dark-brown px-5 py-5 text-brand-cream"
+                            >
+                              <div className="flex items-start justify-between gap-4">
+                                <div>
+                                  <div className="text-[14px] uppercase tracking-[0.14em]">
+                                    {option.label}
+                                  </div>
+                                  <p className="mt-3 text-[14px] leading-[1.8] text-brand-cream">
+                                    {option.detail}
+                                  </p>
+                                </div>
+                                <div className="text-[16px]">{formatPrice(option.price)}</div>
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </>
+                  ) : null}
                 </>
               )}
             </div>

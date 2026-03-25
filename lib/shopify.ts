@@ -35,6 +35,43 @@ const SHOPIFY_STOREFRONT_REVALIDATE_SECONDS = Number.isFinite(
 const SHOPIFY_CONNECTION_PAGE_SIZE = 250;
 const SHOPIFY_MAX_CONNECTION_PAGES = 20;
 
+function isShopifyCheckoutPath(pathname: string): boolean {
+  return pathname.startsWith("/cart/") || pathname.startsWith("/checkouts/");
+}
+
+function normalizeCheckoutUrl(checkoutUrl: string | null | undefined): string {
+  if (!checkoutUrl) {
+    return "";
+  }
+
+  if (!SHOPIFY_STORE_DOMAIN) {
+    return checkoutUrl;
+  }
+
+  try {
+    const parsed = new URL(checkoutUrl);
+
+    if (!isShopifyCheckoutPath(parsed.pathname)) {
+      return checkoutUrl;
+    }
+
+    if (parsed.hostname === SHOPIFY_STORE_DOMAIN) {
+      return parsed.toString();
+    }
+
+    // After pointing the storefront domain to Vercel, Shopify can still return
+    // checkout URLs on the old primary domain. Force the checkout host back to
+    // the Shopify store domain so payments stay on Shopify and do not hit Next.js.
+    parsed.protocol = "https:";
+    parsed.hostname = SHOPIFY_STORE_DOMAIN;
+    parsed.port = "";
+
+    return parsed.toString();
+  } catch {
+    return checkoutUrl;
+  }
+}
+
 function getStorefrontAuthHeaders(): Record<string, string> {
   if (!SHOPIFY_STOREFRONT_ACCESS_TOKEN) {
     return {};
@@ -805,7 +842,7 @@ function normalizeCart(
 
   return {
     id: cart.id ?? "",
-    checkoutUrl: cart.checkoutUrl ?? "",
+    checkoutUrl: normalizeCheckoutUrl(cart.checkoutUrl),
     totalQuantity: cart.totalQuantity ?? 0,
     cost: {
       subtotalAmount: normalizeMoney(cart.cost?.subtotalAmount),
