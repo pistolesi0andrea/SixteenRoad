@@ -1,0 +1,65 @@
+@import "tailwindcss";
+
+@theme {
+  --color-brand-cream: #f2ece0;
+  --color-brand-parchment: #e6dcc8;
+  --color-brand-tortora: #d4cdbf;
+  --color-brand-tobacco: #7a4f2e;
+  --color-brand-dark-brown: #3d2410;
+  --color-brand-burnt: #b8431a;
+  --color-brand-sand: #c0a87a;
+  --color-brand-dust: #9a7e60;
+  --color-brand-pale: #f7f2e8;
+  --color-brand-border: #3d2410;
+  --color-brand-bordeaux: #6d1a1a;
+  --color-brand-bordeaux-dark: #4d1212;
+
+  --font-josefin: var(--font-josefin);
+  --font-libre: var(--font-libre);
+  --font-im-fell: var(--font-im-fell);
+
+  --animate-tick: tick 30s linear infinite;
+
+  @keyframes tick {
+    from { transform: translateX(0); }
+    to { transform: translateX(-50%); }
+  }
+}
+
+@layer base {
+  :root {
+    --background: var(--color-brand-cream);
+    --foreground: var(--color-brand-dark-brown);
+  }
+
+  body {
+    background-color: var(--background);
+    color: var(--foreground);
+    @apply font-josefin font-light;
+    overflow-x: hidden;
+    scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+}
+
+/* Base Editorial container, optionally reused or deleted in favor of custom flex structures */
+@layer utilities {
+  .editorial-container {
+    @apply max-w-[1400px] mx-auto;
+  }
+  .text-balance {
+    text-wrap: balance;
+  }
+}
+
+/* User Mockup Overrides / Components */
+@layer components {
+  /* Buttons */
+  .btn-dark {
+    @apply bg-brand-dark-brown text-brand-cream border-none px-10 py-[14px] font-josefin text-[10px] font-light tracking-[0.24em] uppercase cursor-pointer transition-colors duration-200 hover:bg-brand-tobacco;
+  }
+  .btn-outline {
+    @apply bg-transparent text-brand-dark-brown border border-brand-border border-l-0 px-[30px] py-[14px] font-josefin text-[10px] font-light tracking-[0.24em] uppercase cursor-pointer transition-all duration-200 hover:border-brand-tobacco hover:text-brand-tobacco;
+  }
+}
