@@ -1,5 +1,4 @@
 import { HeroSlideshow } from "@/components/HeroSlideshow";
-import { NewsletterPopup } from "@/components/NewsletterPopup";
 import { ProductCard } from "@/components/ProductCard";
 import { getProducts } from "@/lib/shopify";
 import Image from "next/image";
@@ -10,8 +9,6 @@ export default async function Home() {
 
   return (
     <div>
-      <NewsletterPopup />
-
       <section className="grid min-h-[calc(100vh-74px)] grid-cols-1 border-b border-brand-border lg:min-h-[calc(100vh-116px)] lg:grid-cols-2">
         <div className="relative min-h-[54svh] overflow-hidden sm:min-h-[62svh] lg:min-h-0">
           <HeroSlideshow />

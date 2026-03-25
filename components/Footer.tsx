@@ -79,20 +79,8 @@ export function Footer() {
         ))}
       </div>
 
-      <div className="bg-brand-tobacco flex flex-col gap-6 border-t border-brand-border px-6 py-10 sm:px-8 sm:py-12 md:flex-row md:items-center md:justify-between md:px-14 md:py-[72px]">
-        <div className="font-libre text-[30px] font-normal leading-[1.08] text-brand-cream sm:text-[36px] md:text-[52px]">
-          Iscriviti per le preview <em className="italic text-[#e8c090]">esclusive.</em>
-        </div>
-        <Link
-          href="/#newsletter-signup"
-          className="bg-brand-cream text-brand-dark-brown no-underline px-12 py-4 shrink-0 font-josefin text-[12px] font-light tracking-[0.24em] uppercase hover:bg-brand-parchment transition-colors text-center"
-        >
-          Newsletter
-        </Link>
-      </div>
-
-      <footer className="bg-brand-parchment border-t border-brand-border grid grid-cols-1 md:grid-cols-[2fr_1fr_1fr_1fr]">
-        <div className="border-b border-brand-border p-6 sm:p-8 md:border-b-0 md:border-r md:p-11">
+      <footer className="bg-brand-parchment border-t border-brand-border grid grid-cols-1 md:grid-cols-[1.4fr_1fr_1fr]">
+        <div className="border-b border-brand-border p-6 sm:p-8 md:min-h-[320px] md:border-b-0 md:border-r md:p-11">
           <div className="font-libre text-[38px] tracking-tight italic mb-5 sm:text-[42px]">Sixteen Road</div>
           <p className="text-[16px] leading-[1.9] text-brand-dust max-w-[320px] sm:text-[17px]">
             Curated vintage fashion for the modern era. Editorial aesthetic, premium quality.
@@ -113,13 +101,15 @@ export function Footer() {
           </div>
         </div>
 
-        <div className="border-b border-brand-border p-6 sm:p-8 md:border-b-0 md:border-r md:p-11">
-          <h4 className="text-[13px] tracking-[0.28em] uppercase text-brand-sand mb-5">Support</h4>
+        <div className="border-b border-brand-border p-6 sm:p-8 md:min-h-[320px] md:border-b-0 md:border-r md:p-11">
+          <h4 className="mb-5 text-[15px] font-semibold uppercase tracking-[0.24em] text-brand-tobacco">
+            Support
+          </h4>
           <ul className="space-y-4 flex flex-col">
             <li>
               <Link
                 href="/spedizioni"
-                className="text-[16px] text-brand-dust no-underline tracking-[0.04em] transition-colors hover:text-brand-dark-brown"
+                className="text-[17px] text-brand-dust no-underline tracking-[0.04em] transition-colors hover:text-brand-dark-brown sm:text-[18px]"
               >
                 Shipping & Returns
               </Link>
@@ -127,7 +117,7 @@ export function Footer() {
             <li>
               <Link
                 href="/faq"
-                className="text-[16px] text-brand-dust no-underline tracking-[0.04em] transition-colors hover:text-brand-dark-brown"
+                className="text-[17px] text-brand-dust no-underline tracking-[0.04em] transition-colors hover:text-brand-dark-brown sm:text-[18px]"
               >
                 Size Guide
               </Link>
@@ -135,7 +125,7 @@ export function Footer() {
             <li>
               <Link
                 href="/contatti"
-                className="text-[16px] text-brand-dust no-underline tracking-[0.04em] transition-colors hover:text-brand-dark-brown"
+                className="text-[17px] text-brand-dust no-underline tracking-[0.04em] transition-colors hover:text-brand-dark-brown sm:text-[18px]"
               >
                 Contact Us
               </Link>
@@ -143,13 +133,15 @@ export function Footer() {
           </ul>
         </div>
 
-        <div className="border-b border-brand-border p-6 sm:p-8 md:border-b-0 md:border-r md:p-11">
-          <h4 className="text-[13px] tracking-[0.28em] uppercase text-brand-sand mb-5">Legal</h4>
+        <div className="p-6 sm:p-8 md:min-h-[320px] md:p-11">
+          <h4 className="mb-5 text-[15px] font-semibold uppercase tracking-[0.24em] text-brand-tobacco">
+            Legal
+          </h4>
           <ul className="space-y-4 flex flex-col">
             <li>
               <Link
                 href="/resi"
-                className="text-[16px] text-brand-dust no-underline tracking-[0.04em] transition-colors hover:text-brand-dark-brown"
+                className="text-[17px] text-brand-dust no-underline tracking-[0.04em] transition-colors hover:text-brand-dark-brown sm:text-[18px]"
               >
                 Terms of Service
               </Link>
@@ -157,26 +149,12 @@ export function Footer() {
             <li>
               <Link
                 href="/faq"
-                className="text-[16px] text-brand-dust no-underline tracking-[0.04em] transition-colors hover:text-brand-dark-brown"
+                className="text-[17px] text-brand-dust no-underline tracking-[0.04em] transition-colors hover:text-brand-dark-brown sm:text-[18px]"
               >
                 Privacy Policy
               </Link>
             </li>
           </ul>
-        </div>
-
-        <div className="p-6 sm:p-8 md:p-11" id="newsletter-signup">
-          <h4 className="text-[13px] tracking-[0.28em] uppercase text-brand-sand mb-5">Newsletter</h4>
-          <form className="flex mt-6">
-            <input
-              type="email"
-              placeholder="Email"
-              className="flex-1 bg-brand-cream border border-r-0 border-brand-sand px-4 py-[12px] font-josefin font-light text-[15px] text-brand-dark-brown outline-none placeholder:text-brand-sand"
-            />
-            <button className="bg-brand-burnt text-brand-cream border-none px-5 py-[12px] text-[13px] cursor-pointer uppercase tracking-[0.18em]">
-              Invia
-            </button>
-          </form>
         </div>
       </footer>
 

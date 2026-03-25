@@ -27,6 +27,7 @@ export function CatalogProductCard({
   const primaryImage = getPrimaryProductImage(product);
   const secondaryImage = images[1] ?? null;
   const showSalePricing = collectionHandle === "saldi" && hasDiscount;
+  const isSoldOut = !product.availableForSale;
 
   return (
     <article className="group overflow-hidden border border-[rgba(61,36,16,0.12)] bg-brand-tortora">
@@ -41,7 +42,7 @@ export function CatalogProductCard({
                   fill
                   className={`object-cover object-center transition-all duration-500 ease-out ${
                     secondaryImage ? "group-hover:scale-[1.01] group-hover:opacity-0" : "group-hover:scale-[1.02]"
-                  }`}
+                  } ${isSoldOut ? "opacity-[0.82]" : ""}`}
                   sizes="(min-width: 1536px) 24vw, (min-width: 1280px) 31vw, (min-width: 768px) 48vw, 100vw"
                 />
                 {secondaryImage ? (
@@ -49,7 +50,9 @@ export function CatalogProductCard({
                     src={secondaryImage.url}
                     alt={secondaryImage.altText || `${product.title} second view`}
                     fill
-                    className="object-cover object-center opacity-0 transition-opacity duration-500 ease-out group-hover:opacity-100"
+                    className={`object-cover object-center opacity-0 transition-opacity duration-500 ease-out group-hover:opacity-100 ${
+                      isSoldOut ? "group-hover:opacity-[0.82]" : ""
+                    }`}
                     sizes="(min-width: 1536px) 24vw, (min-width: 1280px) 31vw, (min-width: 768px) 48vw, 100vw"
                   />
                 ) : null}
@@ -59,6 +62,12 @@ export function CatalogProductCard({
                 No image
               </div>
             )}
+
+            {isSoldOut ? (
+              <div className="absolute left-1/2 top-1/2 z-20 -translate-x-1/2 -translate-y-1/2 border border-brand-dark-brown bg-[rgba(245,240,232,0.94)] px-5 py-3 text-[15px] uppercase tracking-[0.24em] text-brand-dark-brown sm:px-6 sm:text-[18px]">
+                Sold out
+              </div>
+            ) : null}
           </div>
         </Link>
 
@@ -72,7 +81,12 @@ export function CatalogProductCard({
         <AddToCartButton
           product={product}
           ariaLabel={`Aggiungi ${product.title} al carrello`}
-          className="absolute right-3 top-3 flex h-9 w-9 items-center justify-center border border-brand-border bg-[rgba(242,236,224,0.94)] text-[20px] text-brand-dark-brown transition-colors duration-200 hover:bg-brand-dark-brown hover:text-brand-cream sm:right-4 sm:top-4 sm:h-10 sm:w-10 sm:text-[22px]"
+          disabled={isSoldOut}
+          className={`absolute right-3 top-3 flex h-9 w-9 items-center justify-center border border-brand-border bg-[rgba(242,236,224,0.94)] text-[20px] text-brand-dark-brown transition-colors duration-200 sm:right-4 sm:top-4 sm:h-10 sm:w-10 sm:text-[22px] ${
+            isSoldOut
+              ? "cursor-not-allowed opacity-60"
+              : "hover:bg-brand-dark-brown hover:text-brand-cream"
+          }`}
         >
           +
         </AddToCartButton>

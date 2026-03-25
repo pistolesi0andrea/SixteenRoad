@@ -2,7 +2,6 @@
 
 import { AddToCartButton } from "@/components/cart/AddToCartButton";
 import { getProductImages, getProductPricing } from "@/lib/product-helpers";
-import { BackInStockForm } from "@/components/product/BackInStockForm";
 import { StorePickupPanel } from "@/components/product/StorePickupPanel";
 import { WishlistToggleButton } from "@/components/wishlist/WishlistToggleButton";
 import { ShopifyProduct, ShopifyProductVariant } from "@/types/shopify";
@@ -244,12 +243,6 @@ export function ProductDetailView({ product }: { product: ShopifyProduct }) {
               </a>
             </div>
           </div>
-
-          {!isSelectedVariantAvailable ? (
-            <div className="mt-6">
-              <BackInStockForm key={selectedVariant?.id ?? "back-in-stock"} product={product} variant={selectedVariant} />
-            </div>
-          ) : null}
 
           <div className="mt-10 max-w-[720px] text-[17px] leading-[1.8] text-brand-dust sm:text-[18px] sm:leading-[1.85]">
             {product.description}

@@ -27,7 +27,7 @@ const faqItems = [
   {
     question: "6. Avete promozioni o sconti speciali?",
     answer:
-      "Si, offriamo regolarmente promozioni e sconti speciali. Iscriviti alla newsletter e segui i nostri canali social per restare aggiornato.",
+      "Si, offriamo regolarmente promozioni e sconti speciali. Segui i nostri canali social per restare aggiornato.",
   },
   {
     question: "7. Posso ritirare gli articoli online in negozio?",

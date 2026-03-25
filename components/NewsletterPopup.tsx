@@ -4,26 +4,68 @@ import Image from "next/image";
 import type { FormEvent } from "react";
 import { useEffect, useState } from "react";
 
+const NEWSLETTER_POPUP_DISMISSED_KEY = "sixteenroad-newsletter-popup-dismissed";
+
 export function NewsletterPopup() {
   const [isOpen, setIsOpen] = useState(false);
   const [email, setEmail] = useState("");
   const [isSubscribed, setIsSubscribed] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   function handleClose() {
     setIsOpen(false);
+    window.localStorage.setItem(NEWSLETTER_POPUP_DISMISSED_KEY, "true");
   }
 
-  function handleSubmit(event: FormEvent<HTMLFormElement>) {
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    setErrorMessage(null);
 
     if (!email) {
+      setErrorMessage("Inserisci un'email valida.");
       return;
     }
 
-    setIsSubscribed(true);
+    setIsSubmitting(true);
+
+    try {
+      const response = await fetch("/api/newsletter", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email,
+          source: "popup",
+        }),
+        cache: "no-store",
+      });
+
+      const payload = (await response.json()) as {
+        error?: string;
+      };
+
+      if (!response.ok) {
+        throw new Error(payload.error ?? "Iscrizione newsletter non riuscita.");
+      }
+
+      setIsSubscribed(true);
+      window.localStorage.setItem(NEWSLETTER_POPUP_DISMISSED_KEY, "true");
+    } catch (error) {
+      setErrorMessage(
+        error instanceof Error ? error.message : "Iscrizione newsletter non riuscita.",
+      );
+    } finally {
+      setIsSubmitting(false);
+    }
   }
 
   useEffect(() => {
+    if (window.localStorage.getItem(NEWSLETTER_POPUP_DISMISSED_KEY) === "true") {
+      return;
+    }
+
     const timer = window.setTimeout(() => {
       setIsOpen(true);
     }, 10000);
@@ -92,12 +134,12 @@ export function NewsletterPopup() {
                 </div>
 
                 <h2 className="mt-6 font-libre text-[32px] leading-[0.98] text-brand-dark-brown sm:mt-8 sm:text-[42px] md:text-[56px]">
-                  Iscriviti e ricevi il 10% sul primo ordine.
+                  Iscriviti alla newsletter.
                 </h2>
 
                 <p className="mt-5 text-[13px] leading-[1.85] tracking-[0.03em] text-brand-dust sm:mt-6 sm:text-[14px] sm:leading-[1.95]">
-                  Ti aggiorneremo su nuovi arrivi, selezioni stagionali e restock. Il codice non
-                  viene mostrato qui: lo riceverai via mail.
+                  Ti aggiorneremo su nuovi arrivi, selezioni stagionali e restock direttamente via
+                  email.
                 </p>
 
                 <form onSubmit={handleSubmit} className="mt-8 space-y-4">
@@ -115,8 +157,8 @@ export function NewsletterPopup() {
                   </label>
 
                   <div className="flex flex-wrap gap-3">
-                    <button type="submit" className="btn-dark px-8">
-                      Iscrivimi
+                    <button type="submit" className="btn-dark px-8" disabled={isSubmitting}>
+                      {isSubmitting ? "Invio..." : "Iscrivimi"}
                     </button>
                     <button
                       type="button"
@@ -126,6 +168,10 @@ export function NewsletterPopup() {
                       Chiudi
                     </button>
                   </div>
+
+                  {errorMessage ? (
+                    <p className="text-[13px] leading-[1.7] text-brand-burnt">{errorMessage}</p>
+                  ) : null}
                 </form>
               </div>
             ) : (
@@ -140,12 +186,12 @@ export function NewsletterPopup() {
                 </div>
 
                 <h2 className="mt-6 font-libre text-[32px] leading-[0.98] text-brand-dark-brown sm:mt-8 sm:text-[42px] md:text-[56px]">
-                  Controlla la tua mail.
+                  Iscrizione completata.
                 </h2>
 
                 <p className="mt-5 text-[13px] leading-[1.85] tracking-[0.03em] text-brand-dust sm:mt-6 sm:text-[14px] sm:leading-[1.95]">
-                  Ti invieremo li il beneficio del 10% e le prossime comunicazioni editoriali del
-                  brand.
+                  Le prossime comunicazioni editoriali del brand arriveranno sulla mail che hai
+                  inserito.
                 </p>
 
                 <button

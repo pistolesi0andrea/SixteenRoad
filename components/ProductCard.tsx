@@ -23,6 +23,7 @@ export function ProductCard({
   const price = product.priceRange.minVariantPrice;
   const primaryImage = getPrimaryProductImage(product);
   const eyebrow = product.productType || "Archive";
+  const isSoldOut = !product.availableForSale;
 
   return (
     <div className="border border-brand-border cursor-pointer relative transition-colors duration-200 bg-brand-cream hover:bg-brand-parchment group">
@@ -46,7 +47,9 @@ export function ProductCard({
               src={primaryImage.url}
               alt={primaryImage.altText || product.title}
               fill
-              className="object-cover object-center block transition-transform duration-[650ms] ease-in-out group-hover:scale-[1.02]"
+              className={`object-cover object-center block transition-transform duration-[650ms] ease-in-out group-hover:scale-[1.02] ${
+                isSoldOut ? "opacity-[0.82]" : ""
+              }`}
               sizes="(min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw"
             />
           ) : (
@@ -54,6 +57,12 @@ export function ProductCard({
               No Image
             </div>
           )}
+
+          {isSoldOut ? (
+            <div className="absolute left-1/2 top-1/2 z-20 -translate-x-1/2 -translate-y-1/2 border border-brand-dark-brown bg-[rgba(245,240,232,0.94)] px-5 py-3 text-[14px] uppercase tracking-[0.24em] text-brand-dark-brown sm:px-6 sm:text-[17px]">
+              Sold out
+            </div>
+          ) : null}
         </div>
       </Link>
       <WishlistToggleButton
@@ -79,7 +88,12 @@ export function ProductCard({
           <AddToCartButton
             product={product}
             ariaLabel={`Aggiungi ${product.title} al carrello`}
-            className="w-8 h-8 bg-brand-dark-brown text-brand-cream border-none text-[20px] cursor-pointer flex items-center justify-center transition-colors duration-[180ms] hover:bg-brand-burnt"
+            disabled={isSoldOut}
+            className={`w-8 h-8 border-none text-[20px] flex items-center justify-center transition-colors duration-[180ms] ${
+              isSoldOut
+                ? "cursor-not-allowed bg-brand-dark-brown/55 text-brand-cream"
+                : "cursor-pointer bg-brand-dark-brown text-brand-cream hover:bg-brand-burnt"
+            }`}
           >
             +
           </AddToCartButton>
