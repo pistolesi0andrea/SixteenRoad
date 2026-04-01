@@ -345,7 +345,7 @@ export function CollectionCatalogView({
       </section>
 
       {filteredProducts.length > 0 ? (
-        <section className="grid grid-cols-1 gap-x-5 gap-y-8 px-5 py-6 sm:grid-cols-2 sm:px-8 md:gap-x-6 md:gap-y-10 md:px-10 xl:grid-cols-3 xl:gap-x-8 xl:gap-y-12 xl:px-14 2xl:grid-cols-4">
+        <section className="grid grid-cols-2 gap-x-3 gap-y-6 px-4 py-6 sm:grid-cols-2 sm:gap-x-5 sm:gap-y-8 sm:px-8 md:gap-x-6 md:gap-y-10 md:px-10 xl:grid-cols-3 xl:gap-x-8 xl:gap-y-12 xl:px-14 2xl:grid-cols-4">
           {filteredProducts.map((product) => (
             <CatalogProductCard key={product.id} product={product} collectionHandle={handle} />
           ))}

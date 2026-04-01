@@ -229,7 +229,7 @@ export function Header() {
                 key={link.href}
                 href={link.href}
                 onClick={() => setIsMobileMenuOpen(false)}
-                className="border-b border-brand-border py-4 font-libre text-[28px] leading-[1.05] text-brand-dark-brown no-underline"
+                className="border-b border-brand-border py-4 font-libre text-[24px] leading-[1.05] text-brand-dark-brown no-underline sm:text-[26px]"
               >
                 {link.label}
               </Link>
