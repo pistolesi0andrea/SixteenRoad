@@ -9,9 +9,22 @@ import { useEffect, useState } from "react";
 const navigationLinks = [
   { href: "/collections/nuovi-arrivi", label: "Nuovi Arrivi" },
   { href: "/collections/abbigliamento", label: "Abbigliamento" },
+  { href: "/collections/abbigliamento?category=Sneakers", label: "Sneakers" },
   { href: "/collections/saldi", label: "Saldi" },
   { href: "/contatti", label: "Contatti" },
   { href: "/buoni-regalo", label: "Buoni Regalo" },
+];
+
+const catalogCategoryLinks = [
+  { href: "/collections/abbigliamento", label: "Tutto" },
+  { href: "/collections/abbigliamento?category=Pantalone", label: "Pantalone" },
+  { href: "/collections/abbigliamento?category=Jeans", label: "Jeans" },
+  { href: "/collections/abbigliamento?category=T-Shirt", label: "T-Shirt" },
+  { href: "/collections/abbigliamento?category=Camicia", label: "Camicia" },
+  { href: "/collections/abbigliamento?category=Maglioni", label: "Maglioni" },
+  { href: "/collections/abbigliamento?category=Capispalla", label: "Capispalla" },
+  { href: "/collections/abbigliamento?category=Accessori", label: "Accessori" },
+  { href: "/collections/abbigliamento?category=Bermuda", label: "Bermuda" },
 ];
 
 function MenuIcon() {
@@ -29,6 +42,20 @@ function CloseIcon() {
     <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="1.8">
       <path d="m6 6 12 12" />
       <path d="M18 6 6 18" />
+    </svg>
+  );
+}
+
+function ChevronIcon({ isOpen }: { isOpen: boolean }) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      className={`h-4 w-4 transition-transform duration-200 ${isOpen ? "rotate-180" : ""}`}
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.8"
+    >
+      <path d="m6 9 6 6 6-6" />
     </svg>
   );
 }
@@ -54,6 +81,12 @@ export function Header() {
   const { itemCount, openCart } = useCart();
   const { itemCount: wishlistCount, openWishlist } = useWishlist();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isCatalogMenuOpen, setIsCatalogMenuOpen] = useState(false);
+
+  function closeMobileMenu() {
+    setIsMobileMenuOpen(false);
+    setIsCatalogMenuOpen(false);
+  }
 
   useEffect(() => {
     if (!isMobileMenuOpen) {
@@ -188,7 +221,7 @@ export function Header() {
           type="button"
           className="absolute inset-0 bg-[rgba(24,13,7,0.42)]"
           aria-label="Chiudi menu"
-          onClick={() => setIsMobileMenuOpen(false)}
+          onClick={closeMobileMenu}
         />
         <aside
           className={`absolute left-0 top-0 flex h-full w-[86%] max-w-[340px] flex-col border-r border-brand-border bg-brand-cream px-5 py-5 shadow-[18px_0_54px_rgba(20,12,7,0.16)] transition-transform duration-300 ${
@@ -198,7 +231,7 @@ export function Header() {
           <div className="flex items-center justify-between">
             <Link
               href="/"
-              onClick={() => setIsMobileMenuOpen(false)}
+              onClick={closeMobileMenu}
               className="relative flex h-14 w-14 items-center justify-center overflow-hidden rounded-full border border-brand-border bg-brand-parchment"
             >
               <Image
@@ -211,7 +244,7 @@ export function Header() {
             </Link>
             <button
               type="button"
-              onClick={() => setIsMobileMenuOpen(false)}
+              onClick={closeMobileMenu}
               className="flex h-11 w-11 items-center justify-center rounded-full border border-brand-border bg-white text-brand-dark-brown"
               aria-label="Chiudi menu"
             >
@@ -224,23 +257,55 @@ export function Header() {
           </div>
 
           <div className="mt-4 flex flex-col border-t border-brand-border">
-            {navigationLinks.map((link) => (
-              <Link
-                key={link.href}
-                href={link.href}
-                onClick={() => setIsMobileMenuOpen(false)}
-                className="border-b border-brand-border py-4 font-libre text-[24px] leading-[1.05] text-brand-dark-brown no-underline sm:text-[26px]"
-              >
-                {link.label}
-              </Link>
-            ))}
+            {navigationLinks.map((link) => {
+              if (link.label !== "Abbigliamento") {
+                return (
+                  <Link
+                    key={link.href}
+                    href={link.href}
+                    onClick={closeMobileMenu}
+                    className="border-b border-brand-border py-4 font-libre text-[21px] leading-[1.05] text-brand-dark-brown no-underline sm:text-[23px]"
+                  >
+                    {link.label}
+                  </Link>
+                );
+              }
+
+              return (
+                <div key={link.href} className="border-b border-brand-border">
+                  <button
+                    type="button"
+                    onClick={() => setIsCatalogMenuOpen((current) => !current)}
+                    className="flex w-full items-center justify-between py-4 text-left font-libre text-[21px] leading-[1.05] text-brand-dark-brown sm:text-[23px]"
+                  >
+                    <span>{link.label}</span>
+                    <ChevronIcon isOpen={isCatalogMenuOpen} />
+                  </button>
+
+                  {isCatalogMenuOpen ? (
+                    <div className="grid grid-cols-1 gap-2 border-t border-[rgba(61,36,16,0.1)] pb-4 pl-1 pt-3">
+                      {catalogCategoryLinks.map((categoryLink) => (
+                        <Link
+                          key={categoryLink.href}
+                          href={categoryLink.href}
+                          onClick={closeMobileMenu}
+                          className="text-[12px] uppercase tracking-[0.16em] text-brand-dust no-underline transition-colors hover:text-brand-dark-brown"
+                        >
+                          {categoryLink.label}
+                        </Link>
+                      ))}
+                    </div>
+                  ) : null}
+                </div>
+              );
+            })}
           </div>
 
           <div className="mt-auto grid grid-cols-2 gap-3 pt-6">
             <button
               type="button"
               onClick={() => {
-                setIsMobileMenuOpen(false);
+                closeMobileMenu();
                 openWishlist();
               }}
               className="flex min-h-[56px] items-center justify-center gap-2 border border-brand-border bg-white px-4 text-[11px] uppercase tracking-[0.18em] text-brand-dark-brown"
@@ -253,7 +318,7 @@ export function Header() {
             <button
               type="button"
               onClick={() => {
-                setIsMobileMenuOpen(false);
+                closeMobileMenu();
                 openCart();
               }}
               className="flex min-h-[56px] items-center justify-center gap-2 bg-brand-dark-brown px-4 text-[11px] uppercase tracking-[0.18em] text-brand-cream"
