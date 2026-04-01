@@ -1,6 +1,4 @@
-import { ShopifyAnalyticsView } from "@/components/analytics/ShopifyAnalyticsTracker";
 import { CollectionCatalogView } from "@/components/catalog/CollectionCatalogView";
-import { AnalyticsEventName, AnalyticsPageType } from "@shopify/hydrogen-react";
 import { getCollection, getProducts } from "@/lib/shopify";
 import { notFound } from "next/navigation";
 
@@ -28,19 +26,10 @@ export default async function CollectionPage({
   }
 
   return (
-    <>
-      <ShopifyAnalyticsView
-        eventName={AnalyticsEventName.COLLECTION_VIEW}
-        pageType={AnalyticsPageType.collection}
-        resourceId={collection.id}
-        collectionId={collection.id}
-        collectionHandle={collection.handle}
-      />
-      <CollectionCatalogView
-        handle={collection.handle}
-        title={collection.title}
-        products={collection.products}
-      />
-    </>
+    <CollectionCatalogView
+      handle={collection.handle}
+      title={collection.title}
+      products={collection.products}
+    />
   );
 }
