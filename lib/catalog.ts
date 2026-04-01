@@ -11,8 +11,8 @@ const CATEGORY_FILTERS: Array<{ label: string; aliases: string[] }> = [
   { label: "Camicia", aliases: ["camicia", "camicie"] },
   { label: "Maglioni", aliases: ["maglione", "maglioni"] },
   { label: "Capispalla", aliases: ["capospalla", "capispalla", "giacca", "giacche"] },
+  { label: "Sneakers", aliases: ["sneakers", "sneaker", "scarpa", "scarpe", "shoe", "shoes"] },
   { label: "Accessori", aliases: ["accessorio", "accessori"] },
-  { label: "Sneakers", aliases: ["sneakers", "scarpa", "scarpe"] },
   { label: "Bermuda", aliases: ["bermuda"] },
 ];
 
@@ -115,8 +115,11 @@ function inferCategoryFromProduct(product: ShopifyProduct) {
     { label: "Camicia", keywords: ["camicia", "camicie", "shirt"] },
     { label: "Maglioni", keywords: ["maglione", "maglia", "cardigan", "pullover"] },
     { label: "Capispalla", keywords: ["giacca", "giacche", "giubbetto", "giubbetti", "jacket", "blazer", "coat"] },
+    {
+      label: "Sneakers",
+      keywords: ["sneakers", "sneaker", "scarpa", "scarpe", "shoe", "shoes", "mocassino", "loafer", "boot", "stivale"],
+    },
     { label: "Accessori", keywords: ["cinta", "papillon", "portafoglio", "pochette", "accessorio", "wallet", "belt"] },
-    { label: "Sneakers", keywords: ["sneakers", "scarpa", "scarpe", "mocassino", "loafer", "boot", "stivale"] },
     { label: "Bermuda", keywords: ["bermuda", "short"] },
     { label: "Pantalone", keywords: ["pantalone", "pantaloni", "trouser"] },
   ];

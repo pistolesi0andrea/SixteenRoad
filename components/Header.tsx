@@ -10,9 +10,17 @@ const navigationLinks = [
   { href: "/collections/nuovi-arrivi", label: "Nuovi Arrivi" },
   { href: "/collections/abbigliamento", label: "Abbigliamento" },
   { href: "/collections/abbigliamento?category=Sneakers", label: "Sneakers" },
+  { href: "/collections/abbigliamento?category=Accessori", label: "Accessori" },
   { href: "/collections/saldi", label: "Saldi" },
   { href: "/contatti", label: "Contatti" },
   { href: "/buoni-regalo", label: "Buoni Regalo" },
+];
+
+const desktopNavigationLinks = [
+  { href: "/collections/nuovi-arrivi", label: "Nuovi Arrivi" },
+  { href: "/collections/abbigliamento", label: "Abbigliamento" },
+  { href: "/collections/saldi", label: "Saldi" },
+  { href: "/contatti", label: "Contatti" },
 ];
 
 const catalogCategoryLinks = [
@@ -23,7 +31,6 @@ const catalogCategoryLinks = [
   { href: "/collections/abbigliamento?category=Camicia", label: "Camicia" },
   { href: "/collections/abbigliamento?category=Maglioni", label: "Maglioni" },
   { href: "/collections/abbigliamento?category=Capispalla", label: "Capispalla" },
-  { href: "/collections/abbigliamento?category=Accessori", label: "Accessori" },
   { href: "/collections/abbigliamento?category=Bermuda", label: "Bermuda" },
 ];
 
@@ -155,7 +162,7 @@ export function Header() {
 
         <div className="hidden h-[92px] grid-cols-[1fr_auto_1fr] items-center px-10 lg:grid">
           <div className="flex gap-7">
-            {navigationLinks.slice(0, 4).map((link) => (
+            {desktopNavigationLinks.map((link) => (
               <Link
                 key={link.href}
                 href={link.href}
