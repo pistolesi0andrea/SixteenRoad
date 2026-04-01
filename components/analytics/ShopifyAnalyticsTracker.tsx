@@ -1,7 +1,7 @@
 "use client";
 
 import type { ReactNode } from "react";
-import { createContext, useContext, useEffect, useMemo, useRef } from "react";
+import { Suspense, createContext, useContext, useEffect, useMemo, useRef } from "react";
 import { usePathname, useSearchParams } from "next/navigation";
 import {
   AnalyticsEventName,
@@ -111,9 +111,6 @@ export function ShopifyAnalyticsTracker({
   config: ShopifyAnalyticsConfig | null;
   children: ReactNode;
 }) {
-  const pathname = usePathname();
-  const searchParams = useSearchParams();
-  const lastTrackedPathRef = useRef<string>("");
   const cookieDomain = useMemo(() => {
     if (typeof window === "undefined") {
       return "";
@@ -176,8 +173,24 @@ export function ShopifyAnalyticsTracker({
     [config, cookiesReady],
   );
 
+  return (
+    <ShopifyAnalyticsContext.Provider value={contextValue}>
+      {children}
+      <Suspense fallback={null}>
+        <ShopifyAnalyticsPageTracker />
+      </Suspense>
+    </ShopifyAnalyticsContext.Provider>
+  );
+}
+
+function ShopifyAnalyticsPageTracker() {
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const lastTrackedPathRef = useRef<string>("");
+  const { isReady, trackEvent } = useShopifyAnalytics();
+
   useEffect(() => {
-    if (!contextValue.isReady) {
+    if (!isReady) {
       return;
     }
 
@@ -190,17 +203,13 @@ export function ShopifyAnalyticsTracker({
 
     lastTrackedPathRef.current = routeKey;
 
-    contextValue.trackEvent({
+    trackEvent({
       eventName: AnalyticsEventName.PAGE_VIEW,
       pageType: getPageType(pathname),
     });
-  }, [contextValue, pathname, searchParams]);
+  }, [isReady, pathname, searchParams, trackEvent]);
 
-  return (
-    <ShopifyAnalyticsContext.Provider value={contextValue}>
-      {children}
-    </ShopifyAnalyticsContext.Provider>
-  );
+  return null;
 }
 
 export function ShopifyAnalyticsView(props: TrackShopifyAnalyticsInput) {
