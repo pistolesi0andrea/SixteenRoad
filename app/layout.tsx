@@ -1,12 +1,14 @@
 import type { Metadata } from "next";
 import { Libre_Baskerville, Josefin_Sans, IM_Fell_English } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
+import { ShopifyAnalyticsTracker } from "@/components/analytics/ShopifyAnalyticsTracker";
 import { CartProvider } from "@/components/cart/CartProvider";
 import { Footer } from "@/components/Footer";
 import { Header } from "@/components/Header";
 import { WhatsAppFloatingButton } from "@/components/WhatsAppFloatingButton";
 import { WishlistDrawer } from "@/components/wishlist/WishlistDrawer";
 import { WishlistProvider } from "@/components/wishlist/WishlistProvider";
+import { getShopAnalyticsConfig } from "@/lib/shopify";
 import "./globals.css";
 
 const libre = Libre_Baskerville({
@@ -34,24 +36,28 @@ export const metadata: Metadata = {
   description: "Curated vintage fashion for the modern era. Editorial aesthetic, premium quality.",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const shopAnalyticsConfig = await getShopAnalyticsConfig();
+
   return (
     <html lang="it">
       <body className={`${libre.variable} ${josefin.variable} ${imFell.variable} font-josefin antialiased text-brand-dark-brown bg-brand-cream selection:bg-brand-tortora selection:text-white flex flex-col min-h-screen`}>
-        <WishlistProvider>
-          <CartProvider>
-            <Header />
-            <main className="flex-grow">{children}</main>
-            <Footer />
-            <WhatsAppFloatingButton />
-            <Analytics />
-          </CartProvider>
-          <WishlistDrawer />
-        </WishlistProvider>
+        <ShopifyAnalyticsTracker config={shopAnalyticsConfig}>
+          <WishlistProvider>
+            <CartProvider>
+              <Header />
+              <main className="flex-grow">{children}</main>
+              <Footer />
+              <WhatsAppFloatingButton />
+              <Analytics />
+            </CartProvider>
+            <WishlistDrawer />
+          </WishlistProvider>
+        </ShopifyAnalyticsTracker>
       </body>
     </html>
   );

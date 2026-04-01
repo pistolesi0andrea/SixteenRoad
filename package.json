@@ -10,6 +10,7 @@
     "audit:shopify-products": "node scripts/audit-shopify-products.mjs"
   },
   "dependencies": {
+    "@shopify/hydrogen-react": "^2026.1.2",
     "@vercel/analytics": "^2.0.1",
     "next": "16.1.7",
     "react": "19.2.3",

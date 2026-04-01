@@ -24,6 +24,7 @@ import {
 const SHOPIFY_API_VERSION = process.env.SHOPIFY_API_VERSION ?? "2025-10";
 const SHOPIFY_STORE_DOMAIN = process.env.SHOPIFY_STORE_DOMAIN;
 const SHOPIFY_STOREFRONT_ACCESS_TOKEN = process.env.SHOPIFY_STOREFRONT_ACCESS_TOKEN;
+const SHOPIFY_STOREFRONT_ID = process.env.SHOPIFY_STOREFRONT_ID ?? null;
 const SHOPIFY_GIFT_CARD_PRODUCT_HANDLE = process.env.SHOPIFY_GIFT_CARD_PRODUCT_HANDLE;
 const SHOPIFY_INCLUDE_INVENTORY_QUANTITY =
   process.env.SHOPIFY_INCLUDE_INVENTORY_QUANTITY === "true";
@@ -360,6 +361,29 @@ interface ShopifyCollectionPage {
   } | null;
 }
 
+export interface ShopifyAnalyticsConfig {
+  shopId: string;
+  acceptedLanguage: string;
+  currency: string;
+  storefrontId: string | null;
+}
+
+interface ShopifyAnalyticsQuery {
+  shop: {
+    id: string;
+  };
+  localization: {
+    language: {
+      isoCode: string;
+    };
+    country: {
+      currency: {
+        isoCode: string;
+      };
+    };
+  };
+}
+
 function hasShopifyConfig() {
   return Boolean(SHOPIFY_STORE_DOMAIN && SHOPIFY_STOREFRONT_ACCESS_TOKEN);
 }
@@ -369,6 +393,41 @@ export function getStorefrontAvailability(): ShopifyStorefrontAvailability {
     enabled: hasShopifyConfig(),
     apiVersion: SHOPIFY_API_VERSION,
     storeDomain: SHOPIFY_STORE_DOMAIN ?? null,
+  };
+}
+
+export async function getShopAnalyticsConfig(): Promise<ShopifyAnalyticsConfig | null> {
+  const data = await shopifyFetch<ShopifyAnalyticsQuery>(
+    `
+      query GetShopAnalyticsConfig {
+        shop {
+          id
+        }
+        localization {
+          language {
+            isoCode
+          }
+          country {
+            currency {
+              isoCode
+            }
+          }
+        }
+      }
+    `,
+    undefined,
+    { revalidate: 300 },
+  );
+
+  if (!data?.shop?.id) {
+    return null;
+  }
+
+  return {
+    shopId: data.shop.id,
+    acceptedLanguage: data.localization?.language?.isoCode ?? "IT",
+    currency: data.localization?.country?.currency?.isoCode ?? "EUR",
+    storefrontId: SHOPIFY_STOREFRONT_ID,
   };
 }
 

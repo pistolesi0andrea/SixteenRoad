@@ -1,6 +1,11 @@
 "use client";
 
 import { createContext, useContext, useEffect, useRef, useState } from "react";
+import { AnalyticsEventName } from "@shopify/hydrogen-react";
+import {
+  createAnalyticsProduct,
+  useShopifyAnalytics,
+} from "@/components/analytics/ShopifyAnalyticsTracker";
 import { CartDrawer } from "@/components/cart/CartDrawer";
 import {
   ShopifyAttribute,
@@ -212,6 +217,7 @@ function getCartDiscountAmount(cart: ShopifyCart) {
 }
 
 export function CartProvider({ children }: { children: React.ReactNode }) {
+  const { trackEvent } = useShopifyAnalytics();
   const [isOpen, setIsOpen] = useState(false);
   const [items, setItems] = useState<CartLineItem[]>([]);
   const [mode, setMode] = useState<CartMode>("local");
@@ -374,6 +380,11 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     },
   ) {
     const nextItem = mapProductToCartLine(product, options);
+    const trackedVariant =
+      options?.variant ??
+      product.variants.edges.find(({ node }) => node.availableForSale)?.node ??
+      product.variants.edges[0]?.node ??
+      null;
     openCart();
     clearError();
 
@@ -406,6 +417,13 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
 
         if (payload.cart) {
           applyShopifyCart(payload.cart);
+          trackEvent({
+            eventName: AnalyticsEventName.ADD_TO_CART,
+            cartId: payload.cart.id,
+            pageType: "cart",
+            products: [createAnalyticsProduct(product, trackedVariant, 1)],
+            totalValue: Number(nextItem.price.amount),
+          });
         }
 
         return;
@@ -420,6 +438,13 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
 
       if (payload.cart) {
         applyShopifyCart(payload.cart);
+        trackEvent({
+          eventName: AnalyticsEventName.ADD_TO_CART,
+          cartId: payload.cart.id,
+          pageType: "cart",
+          products: [createAnalyticsProduct(product, trackedVariant, 1)],
+          totalValue: Number(nextItem.price.amount),
+        });
         return;
       }
 
