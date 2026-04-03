@@ -26,15 +26,6 @@ function getVariantSize(variant: ShopifyProductVariant) {
   );
 }
 
-function getProductColor(product: ShopifyProduct) {
-  return (
-    product.options.find(({ name }) => {
-      const normalizedName = name.trim().toLowerCase();
-      return normalizedName === "color" || normalizedName === "colore";
-    })?.values[0] ?? null
-  );
-}
-
 export function ProductDetailView({ product }: { product: ShopifyProduct }) {
   const variants = product.variants.edges.map((edge) => edge.node).filter((variant) => variant.id);
   const images = getProductImages(product);
@@ -54,7 +45,6 @@ export function ProductDetailView({ product }: { product: ShopifyProduct }) {
     [images, selectedImageUrl],
   );
 
-  const color = getProductColor(product);
   const { price, compareAtPrice, discountPercentage, hasDiscount } = getProductPricing(
     product,
     selectedVariant,
@@ -145,14 +135,12 @@ export function ProductDetailView({ product }: { product: ShopifyProduct }) {
             ) : null}
           </div>
 
-          <div className="mt-8 grid grid-cols-1 gap-4 border-y border-[rgba(61,36,16,0.14)] py-5 sm:grid-cols-2">
-            <div>
-              <div className="text-[12px] uppercase tracking-[0.24em] text-brand-dust">Categoria</div>
-              <div className="mt-2 text-[18px] text-brand-dark-brown">{product.productType}</div>
-            </div>
-            <div>
-              <div className="text-[12px] uppercase tracking-[0.24em] text-brand-dust">Colore</div>
-              <div className="mt-2 text-[18px] text-brand-dark-brown">{color || "Archivio"}</div>
+          <div className="mt-8 border-y border-[rgba(61,36,16,0.14)] py-5">
+            <div className="border border-[rgba(61,36,16,0.14)] bg-white px-5 py-5">
+              <div className="text-[12px] uppercase tracking-[0.24em] text-brand-dust">Descrizione</div>
+              <div className="mt-3 text-[16px] leading-[1.85] text-brand-dust sm:text-[17px]">
+                {product.description}
+              </div>
             </div>
           </div>
 
@@ -244,10 +232,6 @@ export function ProductDetailView({ product }: { product: ShopifyProduct }) {
             </div>
           </div>
 
-          <div className="mt-10 max-w-[720px] text-[17px] leading-[1.8] text-brand-dust sm:text-[18px] sm:leading-[1.85]">
-            {product.description}
-          </div>
-
           <div className="mt-10">
             <StorePickupPanel key={selectedVariant?.id ?? "store-pickup"} product={product} variant={selectedVariant} />
           </div>
@@ -255,60 +239,21 @@ export function ProductDetailView({ product }: { product: ShopifyProduct }) {
           <div className="mt-10 grid grid-cols-1 gap-4">
             <details open className="border border-[rgba(61,36,16,0.14)] bg-white px-5 py-4">
               <summary className="cursor-pointer list-none text-[13px] uppercase tracking-[0.22em] text-brand-dark-brown">
-                Composizione
-              </summary>
-              <p className="mt-4 text-[17px] leading-[1.9] text-brand-dust">
-                {product.details?.composition || "Composizione disponibile in arrivo."}
-              </p>
-            </details>
-
-            <details className="border border-[rgba(61,36,16,0.14)] bg-white px-5 py-4">
-              <summary className="cursor-pointer list-none text-[13px] uppercase tracking-[0.22em] text-brand-dark-brown">
-                Vestibilita
-              </summary>
-              <p className="mt-4 text-[17px] leading-[1.9] text-brand-dust">
-                {product.details?.fitNotes || "Vestibilita regolare."}
-              </p>
-            </details>
-
-            <details className="border border-[rgba(61,36,16,0.14)] bg-white px-5 py-4">
-              <summary className="cursor-pointer list-none text-[13px] uppercase tracking-[0.22em] text-brand-dark-brown">
-                Condizione del capo
-              </summary>
-              <p className="mt-4 text-[17px] leading-[1.9] text-brand-dust">
-                {product.details?.condition || "Condizione del capo disponibile in arrivo."}
-              </p>
-            </details>
-
-            <details className="border border-[rgba(61,36,16,0.14)] bg-white px-5 py-4">
-              <summary className="cursor-pointer list-none text-[13px] uppercase tracking-[0.22em] text-brand-dark-brown">
-                Guida alle taglie
-              </summary>
-              <div className="mt-4 space-y-2 text-[17px] leading-[1.8] text-brand-dust">
-                {(product.details?.sizeGuide ?? ["Guida alle taglie disponibile a breve."]).map((line) => (
-                  <p key={line}>{line}</p>
-                ))}
-              </div>
-            </details>
-
-            <details className="border border-[rgba(61,36,16,0.14)] bg-white px-5 py-4">
-              <summary className="cursor-pointer list-none text-[13px] uppercase tracking-[0.22em] text-brand-dark-brown">
-                Misure del capo
-              </summary>
-              <div className="mt-4 space-y-2 text-[17px] leading-[1.8] text-brand-dust">
-                {(product.details?.measurements ?? ["Misure del capo disponibili a breve."]).map((line) => (
-                  <p key={line}>{line}</p>
-                ))}
-              </div>
-            </details>
-
-            <details className="border border-[rgba(61,36,16,0.14)] bg-white px-5 py-4">
-              <summary className="cursor-pointer list-none text-[13px] uppercase tracking-[0.22em] text-brand-dark-brown">
-                Spedizioni e resi
+                Spedizione
               </summary>
               <div className="mt-4 space-y-3 text-[17px] leading-[1.8] text-brand-dust">
-                <p>Spedizione in Italia a 5 EUR. Ordini entro le 13:00 spediti in giornata.</p>
-                <p>Reso o cambio entro 30 giorni secondo la policy dello store.</p>
+                <p>Spedizione in Italia a 5 EUR.</p>
+                <p>Gli ordini confermati entro le 13:00 vengono spediti in giornata.</p>
+              </div>
+            </details>
+
+            <details className="border border-[rgba(61,36,16,0.14)] bg-white px-5 py-4">
+              <summary className="cursor-pointer list-none text-[13px] uppercase tracking-[0.22em] text-brand-dark-brown">
+                Resi
+              </summary>
+              <div className="mt-4 space-y-3 text-[17px] leading-[1.8] text-brand-dust">
+                <p>Puoi richiedere reso o cambio entro 30 giorni dall&apos;acquisto.</p>
+                <p>Per condizioni complete e istruzioni, consulta la policy dello store.</p>
               </div>
             </details>
           </div>
