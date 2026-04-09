@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useEffect } from "react";
 import { useWishlist } from "@/components/wishlist/WishlistProvider";
+import { isShopifyCdnImage } from "@/lib/product-helpers";
 
 function formatPrice(amount: string, currencyCode: string) {
   return new Intl.NumberFormat("it-IT", {
@@ -101,6 +102,7 @@ export function WishlistDrawer() {
                           alt={item.featuredImage.altText || item.title}
                           fill
                           className="object-cover"
+                          unoptimized={isShopifyCdnImage(item.featuredImage)}
                           sizes="96px"
                         />
                       ) : (

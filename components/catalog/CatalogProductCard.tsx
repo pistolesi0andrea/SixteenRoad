@@ -1,7 +1,12 @@
 "use client";
 
 import { AddToCartButton } from "@/components/cart/AddToCartButton";
-import { getProductImages, getProductPricing, getPrimaryProductImage } from "@/lib/product-helpers";
+import {
+  getProductImages,
+  getProductPricing,
+  getPrimaryProductImage,
+  isShopifyCdnImage,
+} from "@/lib/product-helpers";
 import { WishlistToggleButton } from "@/components/wishlist/WishlistToggleButton";
 import { ShopifyProduct } from "@/types/shopify";
 import Image from "next/image";
@@ -43,6 +48,7 @@ export function CatalogProductCard({
                   className={`object-cover object-center transition-all duration-500 ease-out ${
                     secondaryImage ? "group-hover:scale-[1.01] group-hover:opacity-0" : "group-hover:scale-[1.02]"
                   } ${isSoldOut ? "opacity-[0.82]" : ""}`}
+                  unoptimized={isShopifyCdnImage(primaryImage)}
                   sizes="(min-width: 1536px) 24vw, (min-width: 1280px) 31vw, (min-width: 768px) 48vw, 100vw"
                 />
                 {secondaryImage ? (
@@ -53,6 +59,7 @@ export function CatalogProductCard({
                     className={`object-cover object-center opacity-0 transition-opacity duration-500 ease-out group-hover:opacity-100 ${
                       isSoldOut ? "group-hover:opacity-[0.82]" : ""
                     }`}
+                    unoptimized={isShopifyCdnImage(secondaryImage)}
                     sizes="(min-width: 1536px) 24vw, (min-width: 1280px) 31vw, (min-width: 768px) 48vw, 100vw"
                   />
                 ) : null}

@@ -4,7 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useEffect } from "react";
 import { useCart } from "@/components/cart/CartProvider";
-import { isGiftCardCartLine } from "@/lib/product-helpers";
+import { isGiftCardCartLine, isShopifyCdnImage } from "@/lib/product-helpers";
 
 function formatPrice(amount: number, currencyCode = "EUR") {
   return new Intl.NumberFormat("it-IT", {
@@ -137,6 +137,7 @@ export function CartDrawer() {
                           alt={item.featuredImage.altText || item.title}
                           fill
                           className="object-cover"
+                          unoptimized={isShopifyCdnImage(item.featuredImage)}
                           sizes="(min-width: 640px) 96px, 78px"
                         />
                       ) : (

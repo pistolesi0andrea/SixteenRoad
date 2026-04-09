@@ -1,7 +1,7 @@
 "use client";
 
 import { AddToCartButton } from "@/components/cart/AddToCartButton";
-import { getProductImages, getProductPricing } from "@/lib/product-helpers";
+import { getProductImages, getProductPricing, isShopifyCdnImage } from "@/lib/product-helpers";
 import { StorePickupPanel } from "@/components/product/StorePickupPanel";
 import { WishlistToggleButton } from "@/components/wishlist/WishlistToggleButton";
 import { ShopifyProduct, ShopifyProductVariant } from "@/types/shopify";
@@ -74,6 +74,7 @@ export function ProductDetailView({ product }: { product: ShopifyProduct }) {
                     alt={image.altText || `${product.title} ${index + 1}`}
                     fill
                     className="object-contain p-2"
+                    unoptimized={isShopifyCdnImage(image)}
                     sizes="120px"
                   />
                 </button>
@@ -88,6 +89,7 @@ export function ProductDetailView({ product }: { product: ShopifyProduct }) {
                   fill
                   priority
                   className="object-contain object-center p-4 sm:p-6"
+                  unoptimized={isShopifyCdnImage(selectedImage)}
                   sizes="(min-width: 1280px) 60vw, 100vw"
                 />
               ) : (

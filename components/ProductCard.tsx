@@ -1,5 +1,5 @@
 import { AddToCartButton } from "@/components/cart/AddToCartButton";
-import { getPrimaryProductImage } from "@/lib/product-helpers";
+import { getPrimaryProductImage, isShopifyCdnImage } from "@/lib/product-helpers";
 import { WishlistToggleButton } from "@/components/wishlist/WishlistToggleButton";
 import Image from "next/image";
 import Link from "next/link";
@@ -50,6 +50,7 @@ export function ProductCard({
               className={`object-cover object-center block transition-transform duration-[650ms] ease-in-out group-hover:scale-[1.02] ${
                 isSoldOut ? "opacity-[0.82]" : ""
               }`}
+              unoptimized={isShopifyCdnImage(primaryImage)}
               sizes="(min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw"
             />
           ) : (

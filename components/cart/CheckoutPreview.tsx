@@ -4,7 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useState, type ReactNode } from "react";
 import { useCart } from "@/components/cart/CartProvider";
-import { isGiftCardCartLine } from "@/lib/product-helpers";
+import { isGiftCardCartLine, isShopifyCdnImage } from "@/lib/product-helpers";
 import { CartLineItem } from "@/types/cart";
 import { ShopifyCheckoutDeliveryMode, ShopifyStoreAvailability } from "@/types/shopify";
 
@@ -531,6 +531,7 @@ export function CheckoutPreview() {
                       alt={item.featuredImage.altText || item.title}
                       fill
                       className="object-cover"
+                      unoptimized={isShopifyCdnImage(item.featuredImage)}
                       sizes="(min-width: 640px) 88px, 72px"
                     />
                   ) : (
