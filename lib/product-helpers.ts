@@ -42,6 +42,25 @@ export function isShopifyCdnImage(image: ShopifyImage | string | null | undefine
   }
 }
 
+export function getOptimizedShopifyImageUrl(
+  image: ShopifyImage | string | null | undefined,
+  width: number,
+) {
+  const source = typeof image === "string" ? image : image?.url;
+
+  if (!source || !isShopifyCdnImage(source)) {
+    return source ?? "";
+  }
+
+  try {
+    const url = new URL(source);
+    url.searchParams.set("width", String(width));
+    return url.toString();
+  } catch {
+    return source;
+  }
+}
+
 export function getFirstAvailableVariant(product: ShopifyProduct): ShopifyProductVariant | null {
   const variants = product.variants.edges.map((edge) => edge.node).filter((variant) => variant.id);
   return variants.find((variant) => variant.availableForSale) ?? variants[0] ?? null;

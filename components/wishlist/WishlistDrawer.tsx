@@ -4,7 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useEffect } from "react";
 import { useWishlist } from "@/components/wishlist/WishlistProvider";
-import { isShopifyCdnImage } from "@/lib/product-helpers";
+import { getOptimizedShopifyImageUrl, isShopifyCdnImage } from "@/lib/product-helpers";
 
 function formatPrice(amount: string, currencyCode: string) {
   return new Intl.NumberFormat("it-IT", {
@@ -93,12 +93,13 @@ export function WishlistDrawer() {
                   >
                     <Link
                       href={`/products/${item.handle}`}
+                      prefetch={false}
                       onClick={closeWishlist}
                       className="relative aspect-[3/4] overflow-hidden bg-brand-parchment"
                     >
                       {item.featuredImage ? (
                         <Image
-                          src={item.featuredImage.url}
+                          src={getOptimizedShopifyImageUrl(item.featuredImage, 240)}
                           alt={item.featuredImage.altText || item.title}
                           fill
                           className="object-cover"
@@ -120,6 +121,7 @@ export function WishlistDrawer() {
                           </div>
                           <Link
                             href={`/products/${item.handle}`}
+                            prefetch={false}
                             onClick={closeWishlist}
                             className="font-libre text-[19px] leading-[1.1] text-brand-dark-brown no-underline"
                           >
@@ -147,6 +149,7 @@ export function WishlistDrawer() {
                         </div>
                         <Link
                           href={`/products/${item.handle}`}
+                          prefetch={false}
                           onClick={closeWishlist}
                           className="border border-brand-border bg-brand-cream px-4 py-2 text-[10px] uppercase tracking-[0.2em] text-brand-dark-brown no-underline transition-colors hover:bg-brand-parchment"
                         >

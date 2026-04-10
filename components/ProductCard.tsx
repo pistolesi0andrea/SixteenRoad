@@ -1,5 +1,9 @@
 import { AddToCartButton } from "@/components/cart/AddToCartButton";
-import { getPrimaryProductImage, isShopifyCdnImage } from "@/lib/product-helpers";
+import {
+  getOptimizedShopifyImageUrl,
+  getPrimaryProductImage,
+  isShopifyCdnImage,
+} from "@/lib/product-helpers";
 import { WishlistToggleButton } from "@/components/wishlist/WishlistToggleButton";
 import Image from "next/image";
 import Link from "next/link";
@@ -27,7 +31,7 @@ export function ProductCard({
 
   return (
     <div className="border border-brand-border cursor-pointer relative transition-colors duration-200 bg-brand-cream hover:bg-brand-parchment group">
-      <Link href={`/products/${product.handle}`} className="block">
+      <Link href={`/products/${product.handle}`} prefetch={false} className="block">
         <div className="w-full aspect-[3/4] overflow-hidden relative bg-brand-parchment">
           {badge && (
             <div
@@ -44,7 +48,7 @@ export function ProductCard({
           )}
           {primaryImage ? (
             <Image
-              src={primaryImage.url}
+              src={getOptimizedShopifyImageUrl(primaryImage, 960)}
               alt={primaryImage.altText || product.title}
               fill
               className={`object-cover object-center block transition-transform duration-[650ms] ease-in-out group-hover:scale-[1.02] ${
@@ -74,7 +78,7 @@ export function ProductCard({
         inactiveClassName="hover:bg-brand-dark-brown hover:text-brand-cream"
       />
       <div className="border-t border-brand-border p-4 pb-4 sm:px-5 sm:pb-5">
-        <Link href={`/products/${product.handle}`} className="block no-underline">
+        <Link href={`/products/${product.handle}`} prefetch={false} className="block no-underline">
           <h3 className="font-libre text-[17px] font-normal leading-[1.25] text-brand-dark-brown sm:text-[19px]">
             {product.title}
           </h3>

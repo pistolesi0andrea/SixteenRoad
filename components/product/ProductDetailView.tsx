@@ -1,7 +1,12 @@
 "use client";
 
 import { AddToCartButton } from "@/components/cart/AddToCartButton";
-import { getProductImages, getProductPricing, isShopifyCdnImage } from "@/lib/product-helpers";
+import {
+  getOptimizedShopifyImageUrl,
+  getProductImages,
+  getProductPricing,
+  isShopifyCdnImage,
+} from "@/lib/product-helpers";
 import { StorePickupPanel } from "@/components/product/StorePickupPanel";
 import { WishlistToggleButton } from "@/components/wishlist/WishlistToggleButton";
 import { ShopifyProduct, ShopifyProductVariant } from "@/types/shopify";
@@ -27,14 +32,18 @@ function getVariantSize(variant: ShopifyProductVariant) {
 }
 
 export function ProductDetailView({ product }: { product: ShopifyProduct }) {
-  const variants = product.variants.edges.map((edge) => edge.node).filter((variant) => variant.id);
-  const images = getProductImages(product);
+  const variants = useMemo(
+    () => product.variants.edges.map((edge) => edge.node).filter((variant) => variant.id),
+    [product],
+  );
+  const images = useMemo(() => getProductImages(product), [product]);
   const defaultVariant = useMemo(
     () => variants.find((variant) => variant.availableForSale) ?? variants[0] ?? null,
     [variants],
   );
+  const defaultImageUrl = images[0]?.url ?? "";
   const [selectedVariantId, setSelectedVariantId] = useState(defaultVariant?.id ?? "");
-  const [selectedImageUrl, setSelectedImageUrl] = useState(images[0]?.url ?? "");
+  const [selectedImageUrl, setSelectedImageUrl] = useState(defaultImageUrl);
 
   const selectedVariant = useMemo(
     () => variants.find((variant) => variant.id === selectedVariantId) ?? defaultVariant,
@@ -70,7 +79,7 @@ export function ProductDetailView({ product }: { product: ShopifyProduct }) {
                   aria-label={`Mostra immagine ${index + 1} di ${product.title}`}
                 >
                   <Image
-                    src={image.url}
+                    src={getOptimizedShopifyImageUrl(image, 220)}
                     alt={image.altText || `${product.title} ${index + 1}`}
                     fill
                     className="object-contain p-2"
@@ -84,7 +93,7 @@ export function ProductDetailView({ product }: { product: ShopifyProduct }) {
             <div className="order-1 relative min-h-[400px] overflow-hidden bg-brand-cream md:order-2 sm:min-h-[520px] xl:min-h-[calc(100vh-132px)]">
               {selectedImage ? (
                 <Image
-                  src={selectedImage.url}
+                  src={getOptimizedShopifyImageUrl(selectedImage, 1400)}
                   alt={selectedImage.altText || product.title}
                   fill
                   priority

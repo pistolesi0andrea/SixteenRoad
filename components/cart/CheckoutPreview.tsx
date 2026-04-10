@@ -4,7 +4,11 @@ import Image from "next/image";
 import Link from "next/link";
 import { useState, type ReactNode } from "react";
 import { useCart } from "@/components/cart/CartProvider";
-import { isGiftCardCartLine, isShopifyCdnImage } from "@/lib/product-helpers";
+import {
+  getOptimizedShopifyImageUrl,
+  isGiftCardCartLine,
+  isShopifyCdnImage,
+} from "@/lib/product-helpers";
 import { CartLineItem } from "@/types/cart";
 import { ShopifyCheckoutDeliveryMode, ShopifyStoreAvailability } from "@/types/shopify";
 
@@ -527,7 +531,7 @@ export function CheckoutPreview() {
                 <div className="relative aspect-[3/4] overflow-hidden bg-brand-parchment">
                   {item.featuredImage ? (
                     <Image
-                      src={item.featuredImage.url}
+                      src={getOptimizedShopifyImageUrl(item.featuredImage, 240)}
                       alt={item.featuredImage.altText || item.title}
                       fill
                       className="object-cover"

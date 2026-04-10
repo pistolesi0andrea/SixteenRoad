@@ -3,6 +3,7 @@
 import { AddToCartButton } from "@/components/cart/AddToCartButton";
 import {
   getProductImages,
+  getOptimizedShopifyImageUrl,
   getProductPricing,
   getPrimaryProductImage,
   isShopifyCdnImage,
@@ -37,12 +38,12 @@ export function CatalogProductCard({
   return (
     <article className="group overflow-hidden border border-[rgba(61,36,16,0.12)] bg-brand-tortora">
       <div className="relative overflow-hidden bg-brand-tortora p-2 sm:p-4">
-        <Link href={`/products/${product.handle}`} className="block">
+        <Link href={`/products/${product.handle}`} prefetch={false} className="block">
           <div className="relative aspect-[4/5] overflow-hidden bg-[rgba(255,255,255,0.34)]">
             {primaryImage ? (
               <>
                 <Image
-                  src={primaryImage.url}
+                  src={getOptimizedShopifyImageUrl(primaryImage, 960)}
                   alt={primaryImage.altText || product.title}
                   fill
                   className={`object-cover object-center transition-all duration-500 ease-out ${
@@ -53,7 +54,7 @@ export function CatalogProductCard({
                 />
                 {secondaryImage ? (
                   <Image
-                    src={secondaryImage.url}
+                    src={getOptimizedShopifyImageUrl(secondaryImage, 960)}
                     alt={secondaryImage.altText || `${product.title} second view`}
                     fill
                     className={`object-cover object-center opacity-0 transition-opacity duration-500 ease-out group-hover:opacity-100 ${
@@ -100,7 +101,7 @@ export function CatalogProductCard({
       </div>
 
       <div className="bg-brand-dark-brown px-2.5 py-2.5 text-brand-cream sm:px-4 sm:py-4">
-        <Link href={`/products/${product.handle}`} className="block no-underline">
+        <Link href={`/products/${product.handle}`} prefetch={false} className="block no-underline">
           <div className="flex items-start justify-between gap-2 sm:gap-4">
             <div className="min-w-0 flex-1">
               <h3 className="min-h-[30px] text-[11px] leading-[1.15] font-josefin uppercase tracking-[0.03em] text-white sm:min-h-[44px] sm:text-[20px] sm:leading-[1.08]">

@@ -2,6 +2,11 @@
 
 import { createContext, useContext, useEffect, useRef, useState } from "react";
 import { getProductColors } from "@/lib/catalog";
+import {
+  safeLocalStorageGet,
+  safeLocalStorageRemove,
+  safeLocalStorageSet,
+} from "@/lib/browser-storage";
 import { ShopifyProduct } from "@/types/shopify";
 import { WishlistItem } from "@/types/wishlist";
 
@@ -40,7 +45,7 @@ export function WishlistProvider({ children }: { children: React.ReactNode }) {
   const hasLoadedFromStorage = useRef(false);
 
   useEffect(() => {
-    const storedWishlist = window.localStorage.getItem(WISHLIST_STORAGE_KEY);
+    const storedWishlist = safeLocalStorageGet(WISHLIST_STORAGE_KEY);
 
     if (!storedWishlist) {
       hasLoadedFromStorage.current = true;
@@ -54,7 +59,7 @@ export function WishlistProvider({ children }: { children: React.ReactNode }) {
         setItems(parsedWishlist);
       });
     } catch {
-      window.localStorage.removeItem(WISHLIST_STORAGE_KEY);
+      safeLocalStorageRemove(WISHLIST_STORAGE_KEY);
       hasLoadedFromStorage.current = true;
     }
   }, []);
@@ -64,7 +69,7 @@ export function WishlistProvider({ children }: { children: React.ReactNode }) {
       return;
     }
 
-    window.localStorage.setItem(WISHLIST_STORAGE_KEY, JSON.stringify(items));
+    safeLocalStorageSet(WISHLIST_STORAGE_KEY, JSON.stringify(items));
   }, [items]);
 
   function openWishlist() {

@@ -77,5 +77,5 @@ export default async function ProductPage({
     return notFound();
   }
 
-  return <ProductDetailView product={product} />;
+  return <ProductDetailView key={product.id} product={product} />;
 }

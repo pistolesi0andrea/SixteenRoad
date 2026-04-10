@@ -4,7 +4,11 @@ import Image from "next/image";
 import Link from "next/link";
 import { useEffect } from "react";
 import { useCart } from "@/components/cart/CartProvider";
-import { isGiftCardCartLine, isShopifyCdnImage } from "@/lib/product-helpers";
+import {
+  getOptimizedShopifyImageUrl,
+  isGiftCardCartLine,
+  isShopifyCdnImage,
+} from "@/lib/product-helpers";
 
 function formatPrice(amount: number, currencyCode = "EUR") {
   return new Intl.NumberFormat("it-IT", {
@@ -133,7 +137,7 @@ export function CartDrawer() {
                     <div className="relative aspect-[3/4] overflow-hidden bg-brand-parchment">
                       {item.featuredImage ? (
                         <Image
-                          src={item.featuredImage.url}
+                          src={getOptimizedShopifyImageUrl(item.featuredImage, 240)}
                           alt={item.featuredImage.altText || item.title}
                           fill
                           className="object-cover"

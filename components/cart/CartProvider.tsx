@@ -11,6 +11,11 @@ import {
   ShopifyProductVariant,
 } from "@/types/shopify";
 import { CartLineItem } from "@/types/cart";
+import {
+  safeLocalStorageGet,
+  safeLocalStorageRemove,
+  safeLocalStorageSet,
+} from "@/lib/browser-storage";
 
 const CART_STORAGE_KEY = "sixteenroad-cart";
 const SHOPIFY_CART_ID_STORAGE_KEY = "sixteenroad-shopify-cart-id";
@@ -247,8 +252,8 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     let isActive = true;
-    const storedLocalCart = window.localStorage.getItem(CART_STORAGE_KEY);
-    const storedShopifyCartId = window.localStorage.getItem(SHOPIFY_CART_ID_STORAGE_KEY);
+    const storedLocalCart = safeLocalStorageGet(CART_STORAGE_KEY);
+    const storedShopifyCartId = safeLocalStorageGet(SHOPIFY_CART_ID_STORAGE_KEY);
 
     if (storedLocalCart) {
       try {
@@ -258,7 +263,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
           setItems(parsedCart.map((item) => normalizeStoredCartItem(item)));
         }
       } catch {
-        window.localStorage.removeItem(CART_STORAGE_KEY);
+        safeLocalStorageRemove(CART_STORAGE_KEY);
       }
     }
 
@@ -294,13 +299,13 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
           setDiscountCodes(hydratedCart.cart.discountCodes);
           setDiscountAmount(getCartDiscountAmount(hydratedCart.cart));
           setItems(hydratedCart.cart.lines.map((line) => normalizeStoredCartItem(line)));
-          window.localStorage.removeItem(CART_STORAGE_KEY);
+          safeLocalStorageRemove(CART_STORAGE_KEY);
         } else {
-          window.localStorage.removeItem(SHOPIFY_CART_ID_STORAGE_KEY);
+          safeLocalStorageRemove(SHOPIFY_CART_ID_STORAGE_KEY);
         }
       } catch {
         if (storedShopifyCartId) {
-          window.localStorage.removeItem(SHOPIFY_CART_ID_STORAGE_KEY);
+          safeLocalStorageRemove(SHOPIFY_CART_ID_STORAGE_KEY);
         }
       } finally {
         if (isActive) {
@@ -322,15 +327,15 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     }
 
     if (mode === "shopify") {
-      window.localStorage.removeItem(CART_STORAGE_KEY);
+      safeLocalStorageRemove(CART_STORAGE_KEY);
       if (cartId) {
-        window.localStorage.setItem(SHOPIFY_CART_ID_STORAGE_KEY, cartId);
+        safeLocalStorageSet(SHOPIFY_CART_ID_STORAGE_KEY, cartId);
       }
       return;
     }
 
-    window.localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(items));
-    window.localStorage.removeItem(SHOPIFY_CART_ID_STORAGE_KEY);
+    safeLocalStorageSet(CART_STORAGE_KEY, JSON.stringify(items));
+    safeLocalStorageRemove(SHOPIFY_CART_ID_STORAGE_KEY);
   }, [cartId, isReady, items, mode]);
 
   const itemCount = items.reduce((count, item) => count + item.quantity, 0);
