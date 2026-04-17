@@ -11,6 +11,7 @@ import "./globals.css";
 
 const SITE_URL = "https://www.sixteenroad.com";
 const DEFAULT_SHARE_IMAGE = "/negozio.jpg";
+const DEFAULT_SITE_ICON = "/logo.jpg";
 
 const libre = Libre_Baskerville({
   weight: ["400", "700"],
@@ -41,6 +42,14 @@ export const metadata: Metadata = {
   description: "Curated vintage fashion for the modern era. Editorial aesthetic, premium quality.",
   alternates: {
     canonical: "/",
+  },
+  icons: {
+    icon: [
+      { url: DEFAULT_SITE_ICON, type: "image/jpeg" },
+      { url: "/icon.jpg", type: "image/jpeg" },
+    ],
+    apple: [{ url: "/apple-icon.jpg", type: "image/jpeg" }],
+    shortcut: [{ url: DEFAULT_SITE_ICON, type: "image/jpeg" }],
   },
   openGraph: {
     type: "website",

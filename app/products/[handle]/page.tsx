@@ -1,9 +1,11 @@
 import type { Metadata } from "next";
 import { ProductDetailView } from "@/components/product/ProductDetailView";
+import { getOptimizedShopifyImageUrl } from "@/lib/product-helpers";
 import { getProduct } from "@/lib/shopify";
 import { notFound } from "next/navigation";
 
 const SITE_NAME = "Sixteen Road";
+const SITE_URL = "https://www.sixteenroad.com";
 const FALLBACK_PRODUCT_DESCRIPTION =
   "Capo selezionato da Sixteen Road, con dettagli curati e ricerca vintage contemporanea.";
 
@@ -31,8 +33,10 @@ export async function generateMetadata({
     };
   }
 
-  const image = product.featuredImage?.url ?? product.images.edges[0]?.node.url;
+  const rawImage = product.featuredImage?.url ?? product.images.edges[0]?.node.url ?? null;
+  const image = rawImage ? getOptimizedShopifyImageUrl(rawImage, 1200) : null;
   const description = buildProductDescription(product.description);
+  const productUrl = `${SITE_URL}/products/${product.handle}`;
 
   return {
     title: product.title,
@@ -42,7 +46,7 @@ export async function generateMetadata({
     },
     openGraph: {
       type: "website",
-      url: `/products/${product.handle}`,
+      url: productUrl,
       siteName: SITE_NAME,
       title: `${product.title} | ${SITE_NAME}`,
       description,
@@ -51,6 +55,8 @@ export async function generateMetadata({
         ? [
             {
               url: image,
+              width: 1200,
+              height: 1200,
               alt: product.featuredImage?.altText ?? product.title,
             },
           ]
