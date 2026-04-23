@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Libre_Baskerville, Josefin_Sans, IM_Fell_English } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
+import { MarketingAnalytics } from "@/components/analytics/MarketingAnalytics";
 import { CartProvider } from "@/components/cart/CartProvider";
 import { Footer } from "@/components/Footer";
 import { Header } from "@/components/Header";
@@ -82,6 +83,7 @@ export default function RootLayout({
             <main className="flex-grow">{children}</main>
             <Footer />
             <WhatsAppFloatingButton />
+            <MarketingAnalytics />
             <Analytics />
           </CartProvider>
           <WishlistDrawer />

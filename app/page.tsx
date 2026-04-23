@@ -27,12 +27,19 @@ export default async function Home() {
               Selezione curata di capi autentici, provenienti da tutto il mondo.
               
             </p>
-            <div className="mt-8 flex sm:mt-10 lg:mt-11">
+            <div className="mt-8 flex flex-col gap-3 sm:mt-10 sm:flex-row lg:mt-11">
               <Link
                 href="/collections/abbigliamento"
                 className="btn-dark w-full max-w-[280px] text-center text-[13px] no-underline sm:w-auto sm:text-[14px] lg:text-[15px]"
               >
                 Esplora Collezione
+              </Link>
+              <Link
+                href="/collections/saldi"
+                className="flex w-full max-w-[280px] flex-col items-center justify-center border border-brand-tobacco bg-brand-tobacco px-8 py-[12px] text-center font-josefin text-[13px] uppercase leading-[1.15] tracking-[0.2em] text-brand-cream no-underline transition-colors duration-200 hover:bg-brand-burnt sm:w-auto sm:text-[14px] lg:text-[15px]"
+              >
+                <span>Esplora</span>
+                <span>Saldi</span>
               </Link>
             </div>
           </div>
