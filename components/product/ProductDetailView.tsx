@@ -345,6 +345,20 @@ export function ProductDetailView({ product }: { product: ShopifyProduct }) {
           aria-label={`Zoom immagine di ${product.title}`}
           onClick={closeImageModal}
         >
+          <button
+            type="button"
+            onClick={closeImageModal}
+            className="fixed right-4 top-4 z-[150] inline-flex h-12 items-center justify-center gap-2 rounded-full border border-white/20 bg-white px-4 text-[11px] uppercase tracking-[0.22em] text-brand-dark-brown shadow-[0_14px_36px_rgba(0,0,0,0.3)] transition-transform transition-colors hover:scale-[1.02] hover:bg-brand-parchment sm:right-6 sm:top-6"
+            style={{
+              top: "calc(env(safe-area-inset-top, 0px) + 16px)",
+              right: "calc(env(safe-area-inset-right, 0px) + 16px)",
+            }}
+            aria-label="Chiudi popup immagine"
+          >
+            <span className="text-[16px] leading-none">X</span>
+            <span>Chiudi</span>
+          </button>
+
           <div className="mx-auto flex h-full max-w-[1600px] flex-col" onClick={(event) => event.stopPropagation()}>
             <div className="sticky top-0 z-[130] mb-4 flex items-start justify-between gap-4 bg-[rgba(22,12,6,0.92)] py-2">
               <div className="text-[11px] uppercase tracking-[0.24em] text-brand-cream/80">
