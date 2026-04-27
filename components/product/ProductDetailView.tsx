@@ -12,7 +12,7 @@ import { WishlistToggleButton } from "@/components/wishlist/WishlistToggleButton
 import { ShopifyProduct, ShopifyProductVariant } from "@/types/shopify";
 import Image from "next/image";
 import Link from "next/link";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 
 function formatPrice(amount: string, currencyCode: string) {
   return new Intl.NumberFormat("it-IT", {
@@ -44,6 +44,9 @@ export function ProductDetailView({ product }: { product: ShopifyProduct }) {
   const defaultImageUrl = images[0]?.url ?? "";
   const [selectedVariantId, setSelectedVariantId] = useState(defaultVariant?.id ?? "");
   const [selectedImageUrl, setSelectedImageUrl] = useState(defaultImageUrl);
+  const [isImageModalOpen, setIsImageModalOpen] = useState(false);
+  const [zoomLevel, setZoomLevel] = useState(1);
+  const lastImageTapRef = useRef(0);
 
   const selectedVariant = useMemo(
     () => variants.find((variant) => variant.id === selectedVariantId) ?? defaultVariant,
@@ -61,6 +64,58 @@ export function ProductDetailView({ product }: { product: ShopifyProduct }) {
   const selectedSize = selectedVariant ? getVariantSize(selectedVariant) : null;
   const isSelectedVariantAvailable = selectedVariant?.availableForSale ?? product.availableForSale;
   const selectedVariantQuantity = selectedVariant?.quantityAvailable ?? null;
+
+  useEffect(() => {
+    if (!isImageModalOpen) {
+      return undefined;
+    }
+
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        setIsImageModalOpen(false);
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [isImageModalOpen]);
+
+  const openImageModal = () => {
+    if (!selectedImage) {
+      return;
+    }
+
+    setZoomLevel(1);
+    setIsImageModalOpen(true);
+  };
+
+  const closeImageModal = () => {
+    setIsImageModalOpen(false);
+    setZoomLevel(1);
+  };
+
+  const zoomInImage = () => {
+    setZoomLevel((currentZoom) => Math.min(currentZoom + 0.4, 3.2));
+  };
+
+  const zoomOutImage = () => {
+    setZoomLevel((currentZoom) => Math.max(currentZoom - 0.4, 1));
+  };
+
+  const handleProductImageTouchEnd = () => {
+    const now = Date.now();
+    if (now - lastImageTapRef.current < 260) {
+      openImageModal();
+    }
+    lastImageTapRef.current = now;
+  };
 
   return (
     <div className="border-b border-brand-border bg-brand-cream">
@@ -90,23 +145,34 @@ export function ProductDetailView({ product }: { product: ShopifyProduct }) {
               ))}
             </div>
 
-            <div className="order-1 relative min-h-[400px] overflow-hidden bg-brand-cream md:order-2 sm:min-h-[520px] xl:min-h-[calc(100vh-132px)]">
+            <button
+              type="button"
+              onDoubleClick={openImageModal}
+              onTouchEnd={handleProductImageTouchEnd}
+              className="order-1 relative min-h-[400px] w-full overflow-hidden bg-brand-cream text-left md:order-2 sm:min-h-[520px] xl:min-h-[calc(100vh-132px)]"
+              aria-label="Apri immagine prodotto in popup"
+            >
               {selectedImage ? (
-                <Image
-                  src={getOptimizedShopifyImageUrl(selectedImage, 1400)}
-                  alt={selectedImage.altText || product.title}
-                  fill
-                  priority
-                  className="object-contain object-center p-4 sm:p-6"
-                  unoptimized={isShopifyCdnImage(selectedImage)}
-                  sizes="(min-width: 1280px) 60vw, 100vw"
-                />
+                <>
+                  <Image
+                    src={getOptimizedShopifyImageUrl(selectedImage, 1400)}
+                    alt={selectedImage.altText || product.title}
+                    fill
+                    priority
+                    className="object-contain object-center p-4 sm:p-6"
+                    unoptimized={isShopifyCdnImage(selectedImage)}
+                    sizes="(min-width: 1280px) 60vw, 100vw"
+                  />
+                  <div className="pointer-events-none absolute bottom-4 right-4 border border-[rgba(61,36,16,0.18)] bg-white/88 px-3 py-2 text-[10px] uppercase tracking-[0.22em] text-brand-dark-brown backdrop-blur-sm">
+                    Doppio click per zoom
+                  </div>
+                </>
               ) : (
                 <div className="flex h-full items-center justify-center text-[14px] uppercase tracking-[0.18em] text-brand-dust">
                   No image
                 </div>
               )}
-            </div>
+            </button>
           </div>
         </section>
 
@@ -270,6 +336,85 @@ export function ProductDetailView({ product }: { product: ShopifyProduct }) {
           </div>
         </section>
       </div>
+
+      {isImageModalOpen && selectedImage ? (
+        <div
+          className="fixed inset-0 z-[120] bg-[rgba(22,12,6,0.92)] px-4 py-6 sm:px-6 sm:py-8"
+          role="dialog"
+          aria-modal="true"
+          aria-label={`Zoom immagine di ${product.title}`}
+          onClick={closeImageModal}
+        >
+          <div className="mx-auto flex h-full max-w-[1600px] flex-col" onClick={(event) => event.stopPropagation()}>
+            <div className="mb-4 flex items-center justify-between gap-4">
+              <div className="text-[11px] uppercase tracking-[0.24em] text-brand-cream/80">
+                {product.title}
+              </div>
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={zoomOutImage}
+                  className="flex h-11 w-11 items-center justify-center border border-white/20 bg-white/10 text-[20px] text-brand-cream transition-colors hover:bg-white/20 disabled:cursor-not-allowed disabled:opacity-40"
+                  disabled={zoomLevel <= 1}
+                  aria-label="Riduci zoom"
+                >
+                  −
+                </button>
+                <button
+                  type="button"
+                  onClick={zoomInImage}
+                  className="flex h-11 w-11 items-center justify-center border border-white/20 bg-white/10 text-[20px] text-brand-cream transition-colors hover:bg-white/20 disabled:cursor-not-allowed disabled:opacity-40"
+                  disabled={zoomLevel >= 3.2}
+                  aria-label="Aumenta zoom"
+                >
+                  +
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setZoomLevel(1)}
+                  className="border border-white/20 bg-white/10 px-4 py-3 text-[10px] uppercase tracking-[0.22em] text-brand-cream transition-colors hover:bg-white/20"
+                >
+                  Reset
+                </button>
+                <button
+                  type="button"
+                  onClick={closeImageModal}
+                  className="border border-white/20 bg-white/10 px-4 py-3 text-[10px] uppercase tracking-[0.22em] text-brand-cream transition-colors hover:bg-white/20"
+                >
+                  Chiudi
+                </button>
+              </div>
+            </div>
+
+            <div className="relative flex-1 overflow-auto border border-white/10 bg-[rgba(255,255,255,0.04)]">
+              <div className="flex min-h-full min-w-full items-center justify-center p-6 sm:p-8">
+                <div
+                  className="relative h-[70vh] w-full max-w-[1100px] origin-center transition-transform duration-200 ease-out"
+                  style={{ transform: `scale(${zoomLevel})` }}
+                  onDoubleClick={() => {
+                    if (zoomLevel > 1) {
+                      setZoomLevel(1);
+                      return;
+                    }
+
+                    zoomInImage();
+                  }}
+                >
+                  <Image
+                    src={getOptimizedShopifyImageUrl(selectedImage, 2200)}
+                    alt={selectedImage.altText || product.title}
+                    fill
+                    className="object-contain object-center"
+                    unoptimized={isShopifyCdnImage(selectedImage)}
+                    sizes="100vw"
+                    priority
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      ) : null}
     </div>
   );
 }
