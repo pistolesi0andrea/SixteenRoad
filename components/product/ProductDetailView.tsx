@@ -404,11 +404,19 @@ export function ProductDetailView({ product }: { product: ShopifyProduct }) {
               </div>
             </div>
 
-            <div className="relative flex-1 overflow-auto border border-white/10 bg-[rgba(255,255,255,0.04)]">
-              <div className="flex min-h-full min-w-full items-center justify-center p-6 sm:p-8">
-                <div
-                  className="relative h-[70vh] w-full max-w-[1100px] origin-center transition-transform duration-200 ease-out"
-                  style={{ transform: `scale(${zoomLevel})` }}
+              <div className="relative flex-1 overflow-auto border border-white/10 bg-[rgba(255,255,255,0.04)]">
+                <button
+                  type="button"
+                  onClick={closeImageModal}
+                  className="absolute right-4 top-4 z-[140] flex h-14 w-14 items-center justify-center rounded-full border border-white/25 bg-[rgba(255,255,255,0.92)] text-[28px] leading-none text-brand-dark-brown shadow-[0_12px_28px_rgba(0,0,0,0.26)] transition-transform transition-colors hover:scale-[1.03] hover:bg-brand-parchment"
+                  aria-label="Chiudi popup immagine"
+                >
+                  X
+                </button>
+                <div className="flex min-h-full min-w-full items-center justify-center p-6 sm:p-8">
+                  <div
+                    className="relative h-[70vh] w-full max-w-[1100px] origin-center transition-transform duration-200 ease-out"
+                    style={{ transform: `scale(${zoomLevel})` }}
                   onDoubleClick={() => {
                     if (zoomLevel > 1) {
                       setZoomLevel(1);
