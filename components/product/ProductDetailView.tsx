@@ -349,14 +349,14 @@ export function ProductDetailView({ product }: { product: ShopifyProduct }) {
             <button
               type="button"
               onClick={closeImageModal}
-              className="fixed right-4 top-4 z-[130] inline-flex h-12 items-center justify-center gap-2 rounded-full border border-white/25 bg-[rgba(26,14,7,0.82)] px-4 text-[12px] uppercase tracking-[0.18em] text-white shadow-[0_10px_30px_rgba(0,0,0,0.28)] transition-colors hover:bg-[rgba(255,255,255,0.18)] sm:right-6 sm:top-6"
+              className="absolute right-4 top-4 z-[130] inline-flex h-12 items-center justify-center gap-2 rounded-full border border-white/25 bg-[rgba(26,14,7,0.92)] px-4 text-[12px] uppercase tracking-[0.18em] text-white shadow-[0_10px_30px_rgba(0,0,0,0.28)] transition-colors hover:bg-[rgba(255,255,255,0.18)] sm:right-6 sm:top-6"
               aria-label="Chiudi popup immagine"
             >
               <span className="text-[18px] leading-none">X</span>
               <span>Chiudi</span>
             </button>
 
-            <div className="mb-4 flex items-center justify-between gap-4">
+            <div className="mb-4 flex items-center justify-between gap-4 pr-[132px] sm:pr-[148px]">
               <div className="text-[11px] uppercase tracking-[0.24em] text-brand-cream/80">
                 {product.title}
               </div>
@@ -385,13 +385,6 @@ export function ProductDetailView({ product }: { product: ShopifyProduct }) {
                   className="border border-white/20 bg-white/10 px-4 py-3 text-[10px] uppercase tracking-[0.22em] text-brand-cream transition-colors hover:bg-white/20"
                 >
                   Reset
-                </button>
-                <button
-                  type="button"
-                  onClick={closeImageModal}
-                  className="border border-white/20 bg-white/10 px-4 py-3 text-[10px] uppercase tracking-[0.22em] text-brand-cream transition-colors hover:bg-white/20"
-                >
-                  Chiudi
                 </button>
               </div>
             </div>
