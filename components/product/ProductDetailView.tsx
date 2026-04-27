@@ -346,19 +346,20 @@ export function ProductDetailView({ product }: { product: ShopifyProduct }) {
           onClick={closeImageModal}
         >
           <div className="mx-auto flex h-full max-w-[1600px] flex-col" onClick={(event) => event.stopPropagation()}>
+            <button
+              type="button"
+              onClick={closeImageModal}
+              className="absolute right-4 top-4 z-10 flex h-12 w-12 items-center justify-center rounded-full border border-white/20 bg-[rgba(255,255,255,0.12)] text-[28px] leading-none text-brand-cream transition-colors hover:bg-[rgba(255,255,255,0.22)] sm:right-6 sm:top-6"
+              aria-label="Chiudi popup immagine"
+            >
+              ×
+            </button>
+
             <div className="mb-4 flex items-center justify-between gap-4">
               <div className="text-[11px] uppercase tracking-[0.24em] text-brand-cream/80">
                 {product.title}
               </div>
               <div className="flex items-center gap-2">
-                <button
-                  type="button"
-                  onClick={closeImageModal}
-                  className="flex h-11 w-11 items-center justify-center border border-white/20 bg-white/10 text-[24px] leading-none text-brand-cream transition-colors hover:bg-white/20"
-                  aria-label="Chiudi popup immagine"
-                >
-                  ×
-                </button>
                 <button
                   type="button"
                   onClick={zoomOutImage}
