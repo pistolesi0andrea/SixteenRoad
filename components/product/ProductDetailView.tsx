@@ -346,45 +346,46 @@ export function ProductDetailView({ product }: { product: ShopifyProduct }) {
           onClick={closeImageModal}
         >
           <div className="mx-auto flex h-full max-w-[1600px] flex-col" onClick={(event) => event.stopPropagation()}>
-            <button
-              type="button"
-              onClick={closeImageModal}
-              className="absolute right-4 top-4 z-[130] inline-flex h-12 items-center justify-center gap-2 rounded-full border border-white/25 bg-[rgba(26,14,7,0.92)] px-4 text-[12px] uppercase tracking-[0.18em] text-white shadow-[0_10px_30px_rgba(0,0,0,0.28)] transition-colors hover:bg-[rgba(255,255,255,0.18)] sm:right-6 sm:top-6"
-              aria-label="Chiudi popup immagine"
-            >
-              <span className="text-[18px] leading-none">X</span>
-              <span>Chiudi</span>
-            </button>
-
-            <div className="mb-4 flex items-center justify-between gap-4 pr-[132px] sm:pr-[148px]">
+            <div className="sticky top-0 z-[130] mb-4 flex items-start justify-between gap-4 bg-[rgba(22,12,6,0.92)] py-2">
               <div className="text-[11px] uppercase tracking-[0.24em] text-brand-cream/80">
                 {product.title}
               </div>
-              <div className="flex items-center gap-2">
+              <div className="flex flex-wrap items-center justify-end gap-2">
+                <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={zoomOutImage}
+                    className="flex h-11 w-11 items-center justify-center border border-white/20 bg-white/10 text-[20px] text-brand-cream transition-colors hover:bg-white/20 disabled:cursor-not-allowed disabled:opacity-40"
+                    disabled={zoomLevel <= 1}
+                    aria-label="Riduci zoom"
+                  >
+                    -
+                  </button>
+                  <button
+                    type="button"
+                    onClick={zoomInImage}
+                    className="flex h-11 w-11 items-center justify-center border border-white/20 bg-white/10 text-[20px] text-brand-cream transition-colors hover:bg-white/20 disabled:cursor-not-allowed disabled:opacity-40"
+                    disabled={zoomLevel >= 3.2}
+                    aria-label="Aumenta zoom"
+                  >
+                    +
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setZoomLevel(1)}
+                    className="border border-white/20 bg-white/10 px-4 py-3 text-[10px] uppercase tracking-[0.22em] text-brand-cream transition-colors hover:bg-white/20"
+                  >
+                    Reset
+                  </button>
+                </div>
                 <button
                   type="button"
-                  onClick={zoomOutImage}
-                  className="flex h-11 w-11 items-center justify-center border border-white/20 bg-white/10 text-[20px] text-brand-cream transition-colors hover:bg-white/20 disabled:cursor-not-allowed disabled:opacity-40"
-                  disabled={zoomLevel <= 1}
-                  aria-label="Riduci zoom"
+                  onClick={closeImageModal}
+                  className="inline-flex h-11 items-center justify-center gap-2 border border-white/25 bg-[rgba(26,14,7,0.92)] px-4 text-[10px] uppercase tracking-[0.22em] text-white shadow-[0_10px_30px_rgba(0,0,0,0.28)] transition-colors hover:bg-[rgba(255,255,255,0.18)]"
+                  aria-label="Chiudi popup immagine"
                 >
-                  −
-                </button>
-                <button
-                  type="button"
-                  onClick={zoomInImage}
-                  className="flex h-11 w-11 items-center justify-center border border-white/20 bg-white/10 text-[20px] text-brand-cream transition-colors hover:bg-white/20 disabled:cursor-not-allowed disabled:opacity-40"
-                  disabled={zoomLevel >= 3.2}
-                  aria-label="Aumenta zoom"
-                >
-                  +
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setZoomLevel(1)}
-                  className="border border-white/20 bg-white/10 px-4 py-3 text-[10px] uppercase tracking-[0.22em] text-brand-cream transition-colors hover:bg-white/20"
-                >
-                  Reset
+                  <span className="text-[14px] leading-none">X</span>
+                  <span>Chiudi</span>
                 </button>
               </div>
             </div>
