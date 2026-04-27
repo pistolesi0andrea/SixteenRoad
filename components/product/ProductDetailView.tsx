@@ -353,6 +353,14 @@ export function ProductDetailView({ product }: { product: ShopifyProduct }) {
               <div className="flex items-center gap-2">
                 <button
                   type="button"
+                  onClick={closeImageModal}
+                  className="flex h-11 w-11 items-center justify-center border border-white/20 bg-white/10 text-[24px] leading-none text-brand-cream transition-colors hover:bg-white/20"
+                  aria-label="Chiudi popup immagine"
+                >
+                  ×
+                </button>
+                <button
+                  type="button"
                   onClick={zoomOutImage}
                   className="flex h-11 w-11 items-center justify-center border border-white/20 bg-white/10 text-[20px] text-brand-cream transition-colors hover:bg-white/20 disabled:cursor-not-allowed disabled:opacity-40"
                   disabled={zoomLevel <= 1}
