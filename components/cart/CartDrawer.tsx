@@ -129,100 +129,132 @@ export function CartDrawer() {
                   </div>
                 ) : null}
 
-                {items.map((item) => (
-                  <div
-                    key={item.id}
-                    className="grid grid-cols-[78px_minmax(0,1fr)] gap-3 border border-brand-border bg-white p-3 sm:grid-cols-[96px_minmax(0,1fr)] sm:gap-4"
-                  >
-                    <div className="relative aspect-[3/4] overflow-hidden bg-brand-parchment">
-                      {item.featuredImage ? (
-                        <Image
-                          src={getOptimizedShopifyImageUrl(item.featuredImage, 240)}
-                          alt={item.featuredImage.altText || item.title}
-                          fill
-                          className="object-cover"
-                          unoptimized={isShopifyCdnImage(item.featuredImage)}
-                          sizes="(min-width: 640px) 96px, 78px"
-                        />
+                {items.map((item) => {
+                  const productHref = item.handle ? `/products/${item.handle}` : null;
+
+                  return (
+                    <div
+                      key={item.id}
+                      className="grid grid-cols-[78px_minmax(0,1fr)] gap-3 border border-brand-border bg-white p-3 sm:grid-cols-[96px_minmax(0,1fr)] sm:gap-4"
+                    >
+                      {productHref ? (
+                        <Link href={productHref} className="relative aspect-[3/4] overflow-hidden bg-brand-parchment">
+                          {item.featuredImage ? (
+                            <Image
+                              src={getOptimizedShopifyImageUrl(item.featuredImage, 240)}
+                              alt={item.featuredImage.altText || item.title}
+                              fill
+                              className="object-cover transition-transform duration-300 hover:scale-[1.02]"
+                              unoptimized={isShopifyCdnImage(item.featuredImage)}
+                              sizes="(min-width: 640px) 96px, 78px"
+                            />
+                          ) : (
+                            <div className="flex h-full items-center justify-center text-[11px] text-brand-dust">
+                              No image
+                            </div>
+                          )}
+                        </Link>
                       ) : (
-                        <div className="flex h-full items-center justify-center text-[11px] text-brand-dust">
-                          No image
+                        <div className="relative aspect-[3/4] overflow-hidden bg-brand-parchment">
+                          {item.featuredImage ? (
+                            <Image
+                              src={getOptimizedShopifyImageUrl(item.featuredImage, 240)}
+                              alt={item.featuredImage.altText || item.title}
+                              fill
+                              className="object-cover"
+                              unoptimized={isShopifyCdnImage(item.featuredImage)}
+                              sizes="(min-width: 640px) 96px, 78px"
+                            />
+                          ) : (
+                            <div className="flex h-full items-center justify-center text-[11px] text-brand-dust">
+                              No image
+                            </div>
+                          )}
                         </div>
                       )}
-                    </div>
 
-                    <div className="min-w-0">
-                      <div className="flex items-start justify-between gap-3">
-                        <div>
-                          <div className="mb-2 text-[10px] uppercase tracking-[0.2em] text-brand-dust">
-                            {item.vendor}
-                          </div>
-                          <h3 className="font-libre text-[17px] leading-[1.1] text-brand-dark-brown sm:text-[19px]">
-                            {item.title}
-                          </h3>
-                          <div className="mt-2 text-[11px] tracking-[0.22em] uppercase text-brand-dust">
-                            {item.productType || "Archive"}
-                          </div>
-                        </div>
-                        <button
-                          type="button"
-                          onClick={() => removeItem(item.id)}
-                          className="text-[12px] tracking-[0.18em] uppercase text-brand-tobacco"
-                        >
-                          Rimuovi
-                        </button>
-                      </div>
-
-                      <div className="mt-4 flex flex-wrap gap-x-4 gap-y-2 text-[13px] uppercase tracking-[0.18em] text-brand-dust">
-                        {item.color ? <span>Colore {item.color}</span> : null}
-                        {item.size ? <span>Taglia {item.size}</span> : null}
-                      </div>
-
-                      {item.attributes.filter((attribute) => !HIDDEN_GIFT_CARD_ATTRIBUTE_KEYS.has(attribute.key)).length > 0 ? (
-                        <div className="mt-4 space-y-2 border-t border-brand-border pt-4 text-[14px] leading-[1.7] text-brand-dust">
-                          {item.attributes
-                            .filter((attribute) => !HIDDEN_GIFT_CARD_ATTRIBUTE_KEYS.has(attribute.key))
-                            .map((attribute) => (
-                            <div key={`${item.id}-${attribute.key}`}>
-                              <span className="uppercase tracking-[0.18em] text-brand-burnt">
-                                {GIFT_CARD_ATTRIBUTE_LABELS[attribute.key] ?? attribute.key}
-                              </span>
-                              <div className="mt-1 text-brand-dark-brown">{attribute.value}</div>
+                      <div className="min-w-0">
+                        <div className="flex items-start justify-between gap-3">
+                          <div>
+                            <div className="mb-2 text-[10px] uppercase tracking-[0.2em] text-brand-dust">
+                              {item.vendor}
                             </div>
-                          ))}
-                        </div>
-                      ) : null}
-
-                      <div className="mt-4 flex items-center justify-between gap-4">
-                        <div className="flex items-center border border-brand-border">
-                          <button
-                            type="button"
-                            onClick={() => decrementItem(item.id)}
-                            className="h-9 w-9 text-[18px] text-brand-dark-brown transition-colors hover:bg-brand-parchment"
-                            aria-label={`Riduci quantita di ${item.title}`}
-                          >
-                            -
-                          </button>
-                          <div className="flex h-9 min-w-10 items-center justify-center border-x border-brand-border px-3 text-[14px]">
-                            {item.quantity}
+                            {productHref ? (
+                              <Link
+                                href={productHref}
+                                className="font-libre text-[17px] leading-[1.1] text-brand-dark-brown no-underline transition-colors hover:text-brand-tobacco sm:text-[19px]"
+                              >
+                                {item.title}
+                              </Link>
+                            ) : (
+                              <h3 className="font-libre text-[17px] leading-[1.1] text-brand-dark-brown sm:text-[19px]">
+                                {item.title}
+                              </h3>
+                            )}
+                            <div className="mt-2 text-[11px] tracking-[0.22em] uppercase text-brand-dust">
+                              {item.productType || "Archive"}
+                            </div>
                           </div>
                           <button
                             type="button"
-                            onClick={() => incrementItem(item.id)}
-                            className="h-9 w-9 text-[18px] text-brand-dark-brown transition-colors hover:bg-brand-parchment"
-                            aria-label={`Aumenta quantita di ${item.title}`}
+                            onClick={() => removeItem(item.id)}
+                            className="text-[12px] tracking-[0.18em] uppercase text-brand-tobacco"
                           >
-                            +
+                            Rimuovi
                           </button>
                         </div>
 
-                        <div className="text-[16px] text-brand-tobacco sm:text-[17px]">
-                          {formatPrice(Number(item.price.amount) * item.quantity, item.price.currencyCode)}
+                        <div className="mt-4 flex flex-wrap gap-x-4 gap-y-2 text-[13px] uppercase tracking-[0.18em] text-brand-dust">
+                          {item.color ? <span>Colore {item.color}</span> : null}
+                          {item.size ? <span>Taglia {item.size}</span> : null}
+                        </div>
+
+                        {item.attributes.filter((attribute) => !HIDDEN_GIFT_CARD_ATTRIBUTE_KEYS.has(attribute.key)).length > 0 ? (
+                          <div className="mt-4 space-y-2 border-t border-brand-border pt-4 text-[14px] leading-[1.7] text-brand-dust">
+                            {item.attributes
+                              .filter((attribute) => !HIDDEN_GIFT_CARD_ATTRIBUTE_KEYS.has(attribute.key))
+                              .map((attribute) => (
+                              <div key={`${item.id}-${attribute.key}`}>
+                                <span className="uppercase tracking-[0.18em] text-brand-burnt">
+                                  {GIFT_CARD_ATTRIBUTE_LABELS[attribute.key] ?? attribute.key}
+                                </span>
+                                <div className="mt-1 text-brand-dark-brown">{attribute.value}</div>
+                              </div>
+                            ))}
+                          </div>
+                        ) : null}
+
+                        <div className="mt-4 flex items-center justify-between gap-4">
+                          <div className="flex items-center border border-brand-border">
+                            <button
+                              type="button"
+                              onClick={() => decrementItem(item.id)}
+                              className="h-9 w-9 text-[18px] text-brand-dark-brown transition-colors hover:bg-brand-parchment"
+                              aria-label={`Riduci quantita di ${item.title}`}
+                            >
+                              -
+                            </button>
+                            <div className="flex h-9 min-w-10 items-center justify-center border-x border-brand-border px-3 text-[14px]">
+                              {item.quantity}
+                            </div>
+                            <button
+                              type="button"
+                              onClick={() => incrementItem(item.id)}
+                              className="h-9 w-9 text-[18px] text-brand-dark-brown transition-colors hover:bg-brand-parchment"
+                              aria-label={`Aumenta quantita di ${item.title}`}
+                            >
+                              +
+                            </button>
+                          </div>
+
+                          <div className="text-[16px] text-brand-tobacco sm:text-[17px]">
+                            {formatPrice(Number(item.price.amount) * item.quantity, item.price.currencyCode)}
+                          </div>
                         </div>
                       </div>
                     </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
 
               <div className="border-t border-brand-border bg-brand-parchment px-5 py-4 sm:px-6 sm:py-5">

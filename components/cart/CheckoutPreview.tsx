@@ -14,34 +14,22 @@ import { ShopifyCheckoutDeliveryMode, ShopifyStoreAvailability } from "@/types/s
 
 type PaymentMethod = "card" | "paypal" | "scalapay";
 
-function CardIcon() {
+function PaymentLogo({
+  src,
+  alt,
+  width,
+  height,
+  className,
+}: {
+  src: string;
+  alt: string;
+  width: number;
+  height: number;
+  className?: string;
+}) {
   return (
-    <span className="inline-flex h-9 w-11 items-center justify-center rounded-[10px] border border-current/20 bg-white/10">
-      <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="1.7">
-        <rect x="3.5" y="6" width="17" height="12" rx="2.5" />
-        <path d="M3.5 10.5h17" />
-      </svg>
-    </span>
-  );
-}
-
-function PayPalIcon() {
-  return (
-    <span className="inline-flex h-9 w-11 items-center justify-center rounded-[10px] border border-current/20 bg-white/10">
-      <svg viewBox="0 0 24 24" className="h-5 w-5" fill="currentColor" aria-hidden="true">
-        <path d="M8.1 4.5h5.8c2.5 0 4.1 1.5 4.1 3.6 0 2.8-2.2 4.7-5.5 4.7h-1.8L10 18.5H6.8L8.1 4.5Zm2.6 2.3-.5 4.1h1.6c1.7 0 2.9-.9 2.9-2.3 0-1.1-.7-1.8-2-1.8h-2Z" />
-      </svg>
-    </span>
-  );
-}
-
-function ScalapayIcon() {
-  return (
-    <span className="inline-flex h-9 w-11 items-center justify-center rounded-[10px] border border-current/20 bg-white/10">
-      <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="1.8">
-        <circle cx="8" cy="12" r="3.5" />
-        <circle cx="16" cy="12" r="3.5" />
-      </svg>
+    <span className="inline-flex h-10 w-[68px] items-center justify-center rounded-[10px] border border-current/20 bg-white/10 px-2">
+      <Image src={src} alt={alt} width={width} height={height} className={className ?? "h-auto w-auto max-h-5"} />
     </span>
   );
 }
@@ -62,17 +50,17 @@ const PAYMENT_OPTIONS: Array<{
   {
     id: "card",
     label: "Carte",
-    icon: <CardIcon />,
+    icon: <PaymentLogo src="/payment/mastercard-colored.svg" alt="Mastercard" width={96} height={32} className="h-auto w-auto max-h-6" />,
   },
   {
     id: "paypal",
     label: "PayPal",
-    icon: <PayPalIcon />,
+    icon: <PaymentLogo src="/payment/paypal.svg" alt="PayPal" width={24} height={24} className="h-auto w-auto max-h-5" />,
   },
   {
     id: "scalapay",
     label: "Scalapay",
-    icon: <ScalapayIcon />,
+    icon: <PaymentLogo src="/payment/scalapay.png" alt="Scalapay" width={264} height={64} className="h-auto w-auto max-h-[18px]" />,
   },
 ];
 
@@ -523,46 +511,77 @@ export function CheckoutPreview() {
           </div>
 
           <div className="space-y-4 px-5 py-5">
-            {items.map((item) => (
-              <div
-                key={item.id}
-                className="grid grid-cols-[72px_minmax(0,1fr)] gap-3 border border-brand-border bg-white p-3 sm:grid-cols-[88px_minmax(0,1fr)] sm:gap-4"
-              >
-                <div className="relative aspect-[3/4] overflow-hidden bg-brand-parchment">
-                  {item.featuredImage ? (
-                    <Image
-                      src={getOptimizedShopifyImageUrl(item.featuredImage, 240)}
-                      alt={item.featuredImage.altText || item.title}
-                      fill
-                      className="object-cover"
-                      unoptimized={isShopifyCdnImage(item.featuredImage)}
-                      sizes="(min-width: 640px) 88px, 72px"
-                    />
+            {items.map((item) => {
+              const productHref = item.handle ? `/products/${item.handle}` : null;
+
+              return (
+                <div
+                  key={item.id}
+                  className="grid grid-cols-[72px_minmax(0,1fr)] gap-3 border border-brand-border bg-white p-3 sm:grid-cols-[88px_minmax(0,1fr)] sm:gap-4"
+                >
+                  {productHref ? (
+                    <Link href={productHref} className="relative aspect-[3/4] overflow-hidden bg-brand-parchment">
+                      {item.featuredImage ? (
+                        <Image
+                          src={getOptimizedShopifyImageUrl(item.featuredImage, 240)}
+                          alt={item.featuredImage.altText || item.title}
+                          fill
+                          className="object-cover transition-transform duration-300 hover:scale-[1.02]"
+                          unoptimized={isShopifyCdnImage(item.featuredImage)}
+                          sizes="(min-width: 640px) 88px, 72px"
+                        />
+                      ) : (
+                        <div className="flex h-full items-center justify-center text-[11px] text-brand-dust">
+                          No image
+                        </div>
+                      )}
+                    </Link>
                   ) : (
-                    <div className="flex h-full items-center justify-center text-[11px] text-brand-dust">
-                      No image
+                    <div className="relative aspect-[3/4] overflow-hidden bg-brand-parchment">
+                      {item.featuredImage ? (
+                        <Image
+                          src={getOptimizedShopifyImageUrl(item.featuredImage, 240)}
+                          alt={item.featuredImage.altText || item.title}
+                          fill
+                          className="object-cover"
+                          unoptimized={isShopifyCdnImage(item.featuredImage)}
+                          sizes="(min-width: 640px) 88px, 72px"
+                        />
+                      ) : (
+                        <div className="flex h-full items-center justify-center text-[11px] text-brand-dust">
+                          No image
+                        </div>
+                      )}
                     </div>
                   )}
-                </div>
 
-                <div className="min-w-0">
-                  <div className="flex items-start justify-between gap-3">
-                    <div className="min-w-0">
-                      <div className="text-[12px] uppercase tracking-[0.2em] text-brand-dust">
-                        {item.vendor || item.productType}
+                  <div className="min-w-0">
+                    <div className="flex items-start justify-between gap-3">
+                      <div className="min-w-0">
+                        <div className="text-[12px] uppercase tracking-[0.2em] text-brand-dust">
+                          {item.vendor || item.productType}
+                        </div>
+                        {productHref ? (
+                          <Link
+                            href={productHref}
+                            className="mt-2 block font-libre text-[20px] leading-[1.08] text-brand-dark-brown no-underline transition-colors hover:text-brand-tobacco sm:text-[22px]"
+                          >
+                            {item.title}
+                          </Link>
+                        ) : (
+                          <div className="mt-2 font-libre text-[20px] leading-[1.08] text-brand-dark-brown sm:text-[22px]">
+                            {item.title}
+                          </div>
+                        )}
                       </div>
-                      <div className="mt-2 font-libre text-[20px] leading-[1.08] text-brand-dark-brown sm:text-[22px]">
-                        {item.title}
-                      </div>
+                      <button
+                        type="button"
+                        onClick={() => removeItem(item.id)}
+                        className="shrink-0 text-[12px] uppercase tracking-[0.18em] text-brand-tobacco"
+                      >
+                        Rimuovi
+                      </button>
                     </div>
-                    <button
-                      type="button"
-                      onClick={() => removeItem(item.id)}
-                      className="shrink-0 text-[12px] uppercase tracking-[0.18em] text-brand-tobacco"
-                    >
-                      Rimuovi
-                    </button>
-                  </div>
                   <div className="mt-3 flex flex-wrap gap-x-3 gap-y-1 text-[13px] uppercase tracking-[0.18em] text-brand-dust">
                     {item.size ? <span>Taglia {item.size}</span> : null}
                     {item.color ? <span>{item.color}</span> : null}
@@ -572,8 +591,9 @@ export function CheckoutPreview() {
                     {formatPrice(Number(item.price.amount) * item.quantity, item.price.currencyCode)}
                   </div>
                 </div>
-              </div>
-            ))}
+                </div>
+              );
+            })}
           </div>
 
           <div className="border-t border-brand-border bg-white px-5 py-5">
