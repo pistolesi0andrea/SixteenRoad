@@ -103,7 +103,7 @@ export function CartDrawer() {
                 <h2 className="font-libre text-[28px] leading-[1] text-brand-dark-brown sm:text-[34px]">
                   I tuoi articoli
                 </h2>
-                <p className="mt-3 text-[14px] leading-[1.8] text-brand-dust sm:text-[16px]">
+                <p className="mt-3 text-[16px] leading-[1.8] text-brand-dust sm:text-[18px]">
                   {itemCount > 0
                     ? `${itemCount} articoli selezionati, pronti per il checkout.`
                     : "Seleziona i capi che vuoi salvare nel carrello."}
@@ -160,26 +160,26 @@ export function CartDrawer() {
                           <h3 className="font-libre text-[17px] leading-[1.1] text-brand-dark-brown sm:text-[19px]">
                             {item.title}
                           </h3>
-                          <div className="mt-2 text-[9px] tracking-[0.22em] uppercase text-brand-dust">
+                          <div className="mt-2 text-[11px] tracking-[0.22em] uppercase text-brand-dust">
                             {item.productType || "Archive"}
                           </div>
                         </div>
                         <button
                           type="button"
                           onClick={() => removeItem(item.id)}
-                          className="text-[10px] tracking-[0.18em] uppercase text-brand-tobacco"
+                          className="text-[12px] tracking-[0.18em] uppercase text-brand-tobacco"
                         >
                           Rimuovi
                         </button>
                       </div>
 
-                      <div className="mt-4 flex flex-wrap gap-x-4 gap-y-2 text-[11px] uppercase tracking-[0.18em] text-brand-dust">
+                      <div className="mt-4 flex flex-wrap gap-x-4 gap-y-2 text-[13px] uppercase tracking-[0.18em] text-brand-dust">
                         {item.color ? <span>Colore {item.color}</span> : null}
                         {item.size ? <span>Taglia {item.size}</span> : null}
                       </div>
 
                       {item.attributes.filter((attribute) => !HIDDEN_GIFT_CARD_ATTRIBUTE_KEYS.has(attribute.key)).length > 0 ? (
-                        <div className="mt-4 space-y-2 border-t border-brand-border pt-4 text-[12px] leading-[1.7] text-brand-dust">
+                        <div className="mt-4 space-y-2 border-t border-brand-border pt-4 text-[14px] leading-[1.7] text-brand-dust">
                           {item.attributes
                             .filter((attribute) => !HIDDEN_GIFT_CARD_ATTRIBUTE_KEYS.has(attribute.key))
                             .map((attribute) => (
@@ -203,7 +203,7 @@ export function CartDrawer() {
                           >
                             -
                           </button>
-                          <div className="flex h-9 min-w-10 items-center justify-center border-x border-brand-border px-3 text-[12px]">
+                          <div className="flex h-9 min-w-10 items-center justify-center border-x border-brand-border px-3 text-[14px]">
                             {item.quantity}
                           </div>
                           <button
@@ -216,7 +216,7 @@ export function CartDrawer() {
                           </button>
                         </div>
 
-                        <div className="text-[14px] text-brand-tobacco sm:text-[15px]">
+                        <div className="text-[16px] text-brand-tobacco sm:text-[17px]">
                           {formatPrice(Number(item.price.amount) * item.quantity, item.price.currencyCode)}
                         </div>
                       </div>
@@ -228,7 +228,7 @@ export function CartDrawer() {
               <div className="border-t border-brand-border bg-brand-parchment px-5 py-4 sm:px-6 sm:py-5">
                 
 
-                <div className="mt-5 flex items-center justify-between text-[14px] tracking-[0.2em] uppercase text-brand-dust">
+                <div className="mt-5 flex items-center justify-between text-[16px] font-semibold tracking-[0.2em] uppercase text-brand-dark-brown">
                   <span>Subtotal</span>
                   <span className="text-brand-dark-brown">
                     {formatPrice(subtotal, items[0]?.price.currencyCode ?? "EUR")}
@@ -242,19 +242,19 @@ export function CartDrawer() {
                     </span>
                   </div>
                 ) : null}
-                <div className="mt-3 flex items-center justify-between text-[14px] tracking-[0.2em] uppercase text-brand-dust">
+                <div className="mt-3 flex items-center justify-between text-[16px] font-semibold tracking-[0.2em] uppercase text-brand-dark-brown">
                   <span>{isDigitalGiftCardOrder ? "Digitale" : "Spedizione"}</span>
                   <span className="text-brand-dark-brown">
                     {formatPrice(shippingPrice, items[0]?.price.currencyCode ?? "EUR")}
                   </span>
                 </div>
-                <div className="mt-3 flex items-center justify-between border-t border-brand-border pt-3 text-[14px] tracking-[0.2em] uppercase text-brand-dust">
+                <div className="mt-3 flex items-center justify-between border-t border-brand-border pt-3 text-[16px] font-semibold tracking-[0.2em] uppercase text-brand-dark-brown">
                   <span>Totale stimato</span>
                   <span className="text-brand-dark-brown">
                     {formatPrice(estimatedTotal, items[0]?.price.currencyCode ?? "EUR")}
                   </span>
                 </div>
-                <p className="mt-4 text-[16px] leading-[1.8] text-brand-dust">
+                <p className="mt-4 text-[18px] leading-[1.8] text-brand-dust">
                   {isDigitalGiftCardOrder
                     ? "La gift card verra consegnata digitalmente, senza costi di spedizione."
                     : "Alla spedizione verra sempre applicata la tariffa di 5,00 EUR."}
@@ -263,7 +263,7 @@ export function CartDrawer() {
                 <Link
                   href="/checkout"
                   onClick={closeCart}
-                  className="mt-5 flex w-full items-center justify-center bg-brand-dark-brown px-5 py-4 text-[11px] uppercase tracking-[0.22em] text-brand-cream no-underline transition-colors hover:bg-brand-tobacco"
+                  className="mt-5 flex w-full items-center justify-center bg-brand-dark-brown px-5 py-4 text-[13px] uppercase tracking-[0.22em] text-brand-cream no-underline transition-colors hover:bg-brand-tobacco"
                 >
                   {isSyncing
                     ? "Sincronizzazione..."
@@ -274,7 +274,7 @@ export function CartDrawer() {
                 <Link
                   href="/collections/abbigliamento"
                   onClick={closeCart}
-                  className="mt-3 flex w-full items-center justify-center border border-brand-border bg-white px-5 py-4 text-[11px] uppercase tracking-[0.22em] text-brand-dark-brown no-underline transition-colors hover:bg-brand-cream"
+                  className="mt-3 flex w-full items-center justify-center border border-brand-border bg-white px-5 py-4 text-[13px] uppercase tracking-[0.22em] text-brand-dark-brown no-underline transition-colors hover:bg-brand-cream"
                 >
                   Continua lo shopping
                 </Link>
@@ -289,7 +289,7 @@ export function CartDrawer() {
                 <h3 className="mt-6 font-libre text-[32px] leading-[0.98] text-brand-dark-brown sm:text-[38px]">
                   Il carrello è ancora vuoto.
                 </h3>
-                <p className="mt-5 max-w-[280px] text-[15px] leading-[2] text-brand-dust sm:text-[16px]">
+                <p className="mt-5 max-w-[280px] text-[17px] leading-[2] text-brand-dust sm:text-[18px]">
                   Apri una collezione, aggiungi un capo e il drawer ti mostrera subito riepilogo,
                   quantita e subtotal.
                 </p>
@@ -299,14 +299,14 @@ export function CartDrawer() {
                 <Link
                   href="/collections/abbigliamento"
                   onClick={closeCart}
-                  className="flex w-full items-center justify-center bg-brand-dark-brown px-5 py-4 text-[11px] uppercase tracking-[0.22em] text-brand-cream no-underline"
+                  className="flex w-full items-center justify-center bg-brand-dark-brown px-5 py-4 text-[13px] uppercase tracking-[0.22em] text-brand-cream no-underline"
                 >
                   Vai al catalogo
                 </Link>
                 <Link
                   href="/collections/nuovi-arrivi"
                   onClick={closeCart}
-                  className="flex w-full items-center justify-center border border-brand-border bg-white px-5 py-4 text-[11px] uppercase tracking-[0.22em] text-brand-dark-brown no-underline"
+                  className="flex w-full items-center justify-center border border-brand-border bg-white px-5 py-4 text-[13px] uppercase tracking-[0.22em] text-brand-dark-brown no-underline"
                 >
                   Scopri i nuovi arrivi
                 </Link>

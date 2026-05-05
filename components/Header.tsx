@@ -29,6 +29,7 @@ const catalogCategoryLinks = [
   { href: "/collections/abbigliamento?category=Jeans", label: "Jeans" },
   { href: "/collections/abbigliamento?category=T-Shirt", label: "T-Shirt" },
   { href: "/collections/abbigliamento?category=Camicia", label: "Camicia" },
+  { href: "/collections/abbigliamento?category=Gilet", label: "Gilet" },
   { href: "/collections/abbigliamento?category=Maglioni", label: "Maglioni" },
   { href: "/collections/abbigliamento?category=Capispalla", label: "Capispalla" },
   { href: "/collections/abbigliamento?category=Bermuda", label: "Bermuda" },

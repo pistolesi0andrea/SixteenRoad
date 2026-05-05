@@ -9,6 +9,7 @@ const CATEGORY_FILTERS: Array<{ label: string; aliases: string[] }> = [
   { label: "Jeans", aliases: ["jeans", "jean", "denim", "cinque tasche", "5 tasche"] },
   { label: "T-Shirt", aliases: ["t-shirt", "tshirt", "tee", "t-shirt uomo", "t-shirt donna"] },
   { label: "Camicia", aliases: ["camicia", "camicie"] },
+  { label: "Gilet", aliases: ["gilet", "gillet", "vest", "waistcoat"] },
   { label: "Maglioni", aliases: ["maglione", "maglioni"] },
   { label: "Capispalla", aliases: ["capospalla", "capispalla", "giacca", "giacche"] },
   { label: "Sneakers", aliases: ["sneakers", "sneaker", "scarpa", "scarpe", "shoe", "shoes"] },
@@ -113,6 +114,7 @@ function inferCategoryFromProduct(product: ShopifyProduct) {
     },
     { label: "T-Shirt", keywords: ["t-shirt", "tshirt", " tee ", "-tee", " tee"] },
     { label: "Camicia", keywords: ["camicia", "camicie", "shirt"] },
+    { label: "Gilet", keywords: ["gilet", "gillet", "vest", "waistcoat"] },
     { label: "Maglioni", keywords: ["maglione", "maglia", "cardigan", "pullover"] },
     { label: "Capispalla", keywords: ["giacca", "giacche", "giubbetto", "giubbetti", "jacket", "blazer", "coat"] },
     {
@@ -292,7 +294,7 @@ export function getCatalogSizeGroups(products: ShopifyProduct[]) {
 
   const tailoring = uniqueSortedSizes(
     products
-      .filter((product) => ["Capispalla", "Pantalone"].includes(getProductCategoryLabel(product)))
+      .filter((product) => ["Capispalla", "Pantalone", "Gilet"].includes(getProductCategoryLabel(product)))
       .flatMap((product) => getProductSizes(product))
       .filter((size) => {
         const numericSize = Number.parseInt(size, 10);

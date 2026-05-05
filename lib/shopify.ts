@@ -1044,7 +1044,11 @@ export async function getProduct(handle: string): Promise<ShopifyProduct | null>
 
 export async function getGiftCardProduct(): Promise<ShopifyProduct | null> {
   if (SHOPIFY_GIFT_CARD_PRODUCT_HANDLE) {
-    return getProduct(SHOPIFY_GIFT_CARD_PRODUCT_HANDLE);
+    const configuredGiftCardProduct = await getProduct(SHOPIFY_GIFT_CARD_PRODUCT_HANDLE);
+
+    if (configuredGiftCardProduct) {
+      return configuredGiftCardProduct;
+    }
   }
 
   const products = await getProducts({ all: true });
