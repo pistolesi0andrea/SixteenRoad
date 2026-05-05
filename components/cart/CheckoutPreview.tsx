@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useState, type ReactNode } from "react";
+import { useState } from "react";
 import { useCart } from "@/components/cart/CartProvider";
 import {
   getOptimizedShopifyImageUrl,
@@ -12,28 +12,6 @@ import {
 import { CartLineItem } from "@/types/cart";
 import { ShopifyCheckoutDeliveryMode, ShopifyStoreAvailability } from "@/types/shopify";
 
-type PaymentMethod = "card" | "paypal" | "scalapay";
-
-function PaymentLogo({
-  src,
-  alt,
-  width,
-  height,
-  className,
-}: {
-  src: string;
-  alt: string;
-  width: number;
-  height: number;
-  className?: string;
-}) {
-  return (
-    <span className="inline-flex h-10 w-[68px] items-center justify-center rounded-[10px] border border-current/20 bg-white/10 px-2">
-      <Image src={src} alt={alt} width={width} height={height} className={className ?? "h-auto w-auto max-h-5"} />
-    </span>
-  );
-}
-
 function formatPrice(amount: number, currencyCode = "EUR") {
   return new Intl.NumberFormat("it-IT", {
     style: "currency",
@@ -41,37 +19,6 @@ function formatPrice(amount: number, currencyCode = "EUR") {
     maximumFractionDigits: 2,
   }).format(amount);
 }
-
-const PAYMENT_OPTIONS: Array<{
-  id: PaymentMethod;
-  label: string;
-  icon: ReactNode;
-}> = [
-  {
-    id: "card",
-    label: "Carte",
-    icon: <PaymentLogo src="/payment/mastercard-colored.svg" alt="Mastercard" width={96} height={32} className="h-auto w-auto max-h-6" />,
-  },
-  {
-    id: "paypal",
-    label: "PayPal",
-    icon: <PaymentLogo src="/payment/paypal.svg" alt="PayPal" width={24} height={24} className="h-auto w-auto max-h-5" />,
-  },
-  {
-    id: "scalapay",
-    label: "Scalapay",
-    icon: <PaymentLogo src="/payment/scalapay.png" alt="Scalapay" width={264} height={64} className="h-auto w-auto max-h-[18px]" />,
-  },
-];
-
-const SHIPPING_OPTIONS = [
-  {
-    id: "sda-express",
-    label: "SDA Express 24/48h",
-    detail: "Ordini entro le 13:00 spediti in giornata.",
-    price: 5,
-  },
-];
 
 function getCommonPickupLocations(items: CartLineItem[]): ShopifyStoreAvailability[] {
   const physicalItems = items.filter((item) => !isGiftCardCartLine(item));
@@ -110,7 +57,6 @@ export function CheckoutPreview() {
     isSyncing,
     isUsingShopify,
   } = useCart();
-  const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>("card");
   const [deliveryMode, setDeliveryMode] = useState<ShopifyCheckoutDeliveryMode>("shipping");
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [discountCodeDraft, setDiscountCodeDraft] = useState<string | null>(null);
@@ -149,8 +95,7 @@ export function CheckoutPreview() {
     }));
   }
 
-  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
-    event.preventDefault();
+  async function handleCheckoutRedirect() {
     clearError();
 
     try {
@@ -220,9 +165,9 @@ export function CheckoutPreview() {
 
             <div className="grid grid-cols-3 border border-brand-border bg-brand-parchment">
               {[
-                ["01", "Contatto"],
+                ["01", "Carrello"],
                 ["02", "Consegna"],
-                ["03", "Pagamento"],
+                ["03", "Checkout"],
               ].map(([step, label]) => (
                 <div
                   key={step}
@@ -240,9 +185,9 @@ export function CheckoutPreview() {
       </section>
 
       <div className="editorial-container grid grid-cols-1 gap-6 px-5 py-6 sm:px-6 sm:py-8 lg:grid-cols-[minmax(0,1.15fr)_380px] lg:gap-8 lg:px-10 lg:py-10">
-        <form onSubmit={handleSubmit} className="space-y-6">
+        <div className="order-2 space-y-6 lg:order-1">
           <section className="border border-brand-border bg-brand-cream px-5 py-5 sm:px-6 sm:py-6">
-            <div className="text-[11px] uppercase tracking-[0.24em] text-brand-burnt">
+            <div className="text-[13px] font-semibold uppercase tracking-[0.24em] text-brand-burnt">
               Contatto cliente
             </div>
             <div className="mt-5 grid grid-cols-1 gap-3 md:grid-cols-2">
@@ -283,10 +228,10 @@ export function CheckoutPreview() {
 
           <section className="border border-brand-border bg-brand-cream px-5 py-5 sm:px-6 sm:py-6">
             <div>
-              <div className="text-[11px] uppercase tracking-[0.24em] text-brand-burnt">
+              <div className="text-[13px] font-semibold uppercase tracking-[0.24em] text-brand-burnt">
                 {isDigitalGiftCardOrder ? "Consegna gift card" : "Consegna"}
               </div>
-              <p className="mt-3 max-w-[620px] text-[17px] leading-[1.9] text-brand-dust">
+              <p className="mt-3 max-w-[620px] text-[19px] leading-[1.9] text-brand-dust">
                 {isDigitalGiftCardOrder
                   ? "Il buono regalo viene consegnato digitalmente dopo il pagamento. Non vengono applicati costi di spedizione."
                   : "Scegli se ricevere l'ordine a casa oppure pagare online e ritirarlo in store senza costi di spedizione."}
@@ -298,12 +243,12 @@ export function CheckoutPreview() {
                 <div className="border border-brand-border bg-white px-5 py-5 text-brand-dark-brown">
                   <div className="flex items-start justify-between gap-4">
                     <div>
-                      <div className="text-[16px] uppercase tracking-[0.14em]">
-                        Gift card digitale
-                      </div>
-                      <p className="mt-3 text-[16px] leading-[1.8] text-brand-dust">
-                        Il codice verra generato e inviato digitalmente dopo il pagamento.
-                      </p>
+                          <div className="text-[17px] uppercase tracking-[0.14em]">
+                            Gift card digitale
+                          </div>
+                          <p className="mt-3 text-[18px] leading-[1.8] text-brand-dust">
+                            Il codice verra generato e inviato digitalmente dopo il pagamento.
+                          </p>
                     </div>
                     <div className="text-[18px]">{formatPrice(0, currencyCode)}</div>
                   </div>
@@ -322,17 +267,17 @@ export function CheckoutPreview() {
                     >
                       <div className="flex items-start justify-between gap-4">
                         <div>
-                          <div className="text-[16px] uppercase tracking-[0.14em]">
+                          <div className="text-[17px] uppercase tracking-[0.14em]">
                             Spedizione Italia
                           </div>
                           <p
-                            className={`mt-3 text-[16px] leading-[1.8] ${
+                            className={`mt-3 text-[18px] leading-[1.8] ${
                               effectiveDeliveryMode === "shipping"
                                 ? "text-brand-cream"
                                 : "text-brand-dust"
                             }`}
                           >
-                            Ordini entro le 13:00 spediti in giornata.
+                            Ricevi l'ordine all'indirizzo indicato.
                           </p>
                         </div>
                         <div className="text-[18px]">{formatPrice(5, currencyCode)}</div>
@@ -353,11 +298,11 @@ export function CheckoutPreview() {
                     >
                       <div className="flex items-start justify-between gap-4">
                         <div>
-                          <div className="text-[16px] uppercase tracking-[0.14em]">
+                          <div className="text-[17px] uppercase tracking-[0.14em]">
                             Ritira in store
                           </div>
                           <p
-                            className={`mt-3 text-[16px] leading-[1.8] ${
+                            className={`mt-3 text-[18px] leading-[1.8] ${
                               effectiveDeliveryMode === "pickup" ? "text-brand-cream" : "text-brand-dust"
                             }`}
                           >
@@ -373,8 +318,8 @@ export function CheckoutPreview() {
 
                   {effectiveDeliveryMode === "pickup" && canUsePickup ? (
                     <div className="border border-brand-border bg-white px-5 py-5 text-brand-dark-brown">
-                      <div className="text-[16px] uppercase tracking-[0.14em]">Boutique disponibili</div>
-                      <div className="mt-3 space-y-2 text-[16px] leading-[1.8] text-brand-dust">
+                      <div className="text-[17px] uppercase tracking-[0.14em]">Boutique disponibili</div>
+                      <div className="mt-3 space-y-2 text-[18px] leading-[1.8] text-brand-dust">
                         {pickupLocations.map((location) => (
                           <p key={location.location.id}>
                             {location.location.name}
@@ -382,7 +327,7 @@ export function CheckoutPreview() {
                           </p>
                         ))}
                       </div>
-                      <p className="mt-4 text-[16px] leading-[1.8] text-brand-dust">
+                      <p className="mt-4 text-[18px] leading-[1.8] text-brand-dust">
                         Nel checkout Shopify vedrai l&apos;opzione di ritiro e potrai finalizzare il
                         pagamento online prima di passare in negozio.
                       </p>
@@ -417,62 +362,10 @@ export function CheckoutPreview() {
                         placeholder="Citta"
                         className="h-[58px] border border-brand-border bg-white px-4 text-[18px] text-brand-dark-brown outline-none placeholder:text-brand-dust"
                       />
-
-                      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-                        {SHIPPING_OPTIONS.map((option) => {
-                          return (
-                            <div
-                              key={option.id}
-                              className="border border-brand-dark-brown bg-brand-dark-brown px-5 py-5 text-brand-cream"
-                            >
-                              <div className="flex items-start justify-between gap-4">
-                                <div>
-                                  <div className="text-[16px] uppercase tracking-[0.14em]">
-                                    {option.label}
-                                  </div>
-                                  <p className="mt-3 text-[16px] leading-[1.8] text-brand-cream">
-                                    {option.detail}
-                                  </p>
-                                </div>
-                                <div className="text-[18px]">{formatPrice(option.price)}</div>
-                              </div>
-                            </div>
-                          );
-                        })}
-                      </div>
                     </>
                   ) : null}
                 </>
               )}
-            </div>
-          </section>
-
-          <section className="border border-brand-border bg-brand-cream px-5 py-5 sm:px-6 sm:py-6">
-            <div className="text-[11px] uppercase tracking-[0.24em] text-brand-burnt">
-              Pagamento
-            </div>
-            <div className="mt-5 grid grid-cols-1 gap-3 sm:grid-cols-3">
-              {PAYMENT_OPTIONS.map((option) => {
-                const isActive = paymentMethod === option.id;
-
-                return (
-                  <button
-                    key={option.id}
-                    type="button"
-                    onClick={() => setPaymentMethod(option.id)}
-                    className={`border px-4 py-4 text-left transition-colors sm:px-5 sm:py-5 ${
-                      isActive
-                        ? "border-brand-dark-brown bg-brand-dark-brown text-brand-cream"
-                        : "border-brand-border bg-white text-brand-dark-brown hover:bg-brand-parchment"
-                    }`}
-                  >
-                    <div className="flex items-center gap-3">
-                      {option.icon}
-                      <div className="text-[16px] uppercase tracking-[0.14em] sm:text-[17px]">{option.label}</div>
-                    </div>
-                  </button>
-                );
-              })}
             </div>
           </section>
 
@@ -484,30 +377,16 @@ export function CheckoutPreview() {
 
           {isSubmitted ? (
             <div className="border border-brand-border bg-white px-5 py-5 text-[17px] leading-[1.9] text-brand-dark-brown sm:px-6 sm:py-6">
-              Preview completata. I dati del checkout sono stati raccolti correttamente.
+              Reindirizzamento al checkout Shopify pronto.
             </div>
           ) : null}
+        </div>
 
-          <div className="flex flex-wrap items-center gap-3">
-            <button type="submit" className="btn-dark min-h-[58px] text-[16px]" disabled={isSyncing}>
-              {isSyncing
-                ? "Sincronizzazione..."
-                : isUsingShopify
-                  ? "Vai al checkout Shopify"
-                  : "Procedi al checkout Shopify"}
-            </button>
-            
-          </div>
-        </form>
-
-        <aside className="h-fit border border-brand-border bg-brand-cream lg:sticky lg:top-[124px]">
+        <aside className="order-1 h-fit border border-brand-border bg-brand-cream lg:order-2 lg:sticky lg:top-[124px]">
           <div className="border-b border-brand-border bg-brand-parchment px-5 py-5">
-            <div className="text-[11px] uppercase tracking-[0.24em] text-brand-burnt">
+            <div className="text-[13px] font-semibold uppercase tracking-[0.24em] text-brand-burnt">
               Riepilogo ordine
             </div>
-            <h2 className="mt-3 font-libre text-[28px] leading-[1] text-brand-dark-brown sm:text-[32px]">
-              {itemCount} articoli nel checkout
-            </h2>
           </div>
 
           <div className="space-y-4 px-5 py-5">
@@ -676,6 +555,18 @@ export function CheckoutPreview() {
                 <span>{formatPrice(total, currencyCode)}</span>
               </div>
             </div>
+            <button
+              type="button"
+              onClick={handleCheckoutRedirect}
+              className="mt-5 flex min-h-[58px] w-full items-center justify-center bg-brand-dark-brown px-5 py-4 text-[15px] uppercase tracking-[0.22em] text-brand-cream transition-colors hover:bg-brand-tobacco"
+              disabled={isSyncing}
+            >
+              {isSyncing
+                ? "Reindirizzamento..."
+                : isUsingShopify
+                  ? "Paga adesso"
+                  : "Vai al checkout Shopify"}
+            </button>
             {invalidDiscountCode ? (
               <p className="mt-4 text-[15px] leading-[1.7] text-brand-tobacco">
                 Il codice {invalidDiscountCode.code} non e applicabile a questo carrello.

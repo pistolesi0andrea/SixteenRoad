@@ -1431,9 +1431,7 @@ export async function prepareCartForCheckout(
     return null;
   }
 
-  const buyerIdentity = {
-    email: input.email,
-    phone: normalizePhoneForShopify(input.phone),
+  const buyerIdentity: Record<string, unknown> = {
     countryCode: "IT",
     preferences: {
       delivery: {
@@ -1441,6 +1439,17 @@ export async function prepareCartForCheckout(
       },
     },
   };
+
+  const normalizedEmail = input.email?.trim();
+  const normalizedPhone = normalizePhoneForShopify(input.phone);
+
+  if (normalizedEmail) {
+    buyerIdentity.email = normalizedEmail;
+  }
+
+  if (normalizedPhone) {
+    buyerIdentity.phone = normalizedPhone;
+  }
 
   let cart = await updateCartBuyerIdentity(cartId, buyerIdentity);
 

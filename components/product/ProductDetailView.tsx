@@ -7,7 +7,6 @@ import {
   getProductPricing,
   isShopifyCdnImage,
 } from "@/lib/product-helpers";
-import { StorePickupPanel } from "@/components/product/StorePickupPanel";
 import { WishlistToggleButton } from "@/components/wishlist/WishlistToggleButton";
 import { ShopifyProduct, ShopifyProductVariant } from "@/types/shopify";
 import Image from "next/image";
@@ -309,26 +308,22 @@ export function ProductDetailView({ product }: { product: ShopifyProduct }) {
             </div>
           </div>
 
-          <div className="mt-10">
-            <StorePickupPanel key={selectedVariant?.id ?? "store-pickup"} product={product} variant={selectedVariant} />
-          </div>
-
           <div className="mt-10 grid grid-cols-1 gap-4">
             <details open className="border border-[rgba(61,36,16,0.14)] bg-white px-5 py-4">
-              <summary className="cursor-pointer list-none text-[13px] uppercase tracking-[0.22em] text-brand-dark-brown">
+              <summary className="cursor-pointer list-none text-[14px] font-semibold uppercase tracking-[0.22em] text-brand-dark-brown">
                 Spedizione
               </summary>
-              <div className="mt-4 space-y-3 text-[17px] leading-[1.8] text-brand-dust">
+              <div className="mt-4 space-y-3 text-[18px] leading-[1.8] text-brand-dust">
                 <p>Spedizione in Italia a 5 EUR.</p>
                 <p>Gli ordini confermati entro le 13:00 vengono spediti in giornata.</p>
               </div>
             </details>
 
             <details className="border border-[rgba(61,36,16,0.14)] bg-white px-5 py-4">
-              <summary className="cursor-pointer list-none text-[13px] uppercase tracking-[0.22em] text-brand-dark-brown">
+              <summary className="cursor-pointer list-none text-[14px] font-semibold uppercase tracking-[0.22em] text-brand-dark-brown">
                 Resi
               </summary>
-              <div className="mt-4 space-y-3 text-[17px] leading-[1.8] text-brand-dust">
+              <div className="mt-4 space-y-3 text-[18px] leading-[1.8] text-brand-dust">
                 <p>Puoi richiedere reso o cambio entro 30 giorni dall&apos;acquisto.</p>
                 <p>Per condizioni complete e istruzioni, consulta la policy dello store.</p>
               </div>

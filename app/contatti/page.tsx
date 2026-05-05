@@ -2,7 +2,7 @@ import Link from "next/link";
 
 const businessHours = [
   { day: "Lunedi", hours: "Chiuso" },
-  { day: "Martedi", hours: "9:30 - 13:00 / 16:00   - 20:00" },
+  { day: "Martedi", hours: "9:30 - 13:00 / 16:00 - 20:00" },
   { day: "Mercoledi", hours: "9:30 - 13:00 / 16:00 - 20:00" },
   { day: "Giovedi", hours: "9:30 - 13:00 / 16:00 - 20:00" },
   { day: "Venerdi", hours: "9:30 - 13:00 / 16:00 - 20:00" },
@@ -96,12 +96,14 @@ export default function ContactPage() {
               {businessHours.map((row) => (
                 <div
                   key={row.day}
-                  className="flex items-center justify-between gap-4 border-b border-[rgba(61,36,16,0.08)] text-[14px] pb-3 last:border-b-0 last:pb-0"
+                  className="flex items-center justify-between gap-4 border-b border-[rgba(61,36,16,0.08)] text-[15px] pb-3 last:border-b-0 last:pb-0"
                 >
-                  <div className="text-[14px] uppercase tracking-[0.12em] text-brand-dark-brown">
+                  <div className="text-[15px] uppercase tracking-[0.12em] text-brand-dark-brown">
                     {row.day}
                   </div>
-                  <div className="text-[15px] text-brand-dust text-right">{row.hours}</div>
+                  <div className="text-[15px] font-semibold text-brand-dark-brown text-right">
+                    {row.hours}
+                  </div>
                 </div>
               ))}
             </div>
