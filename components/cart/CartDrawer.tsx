@@ -42,8 +42,9 @@ export function CartDrawer() {
     discountAmount,
     errorMessage,
     isSyncing,
-    isUsingShopify,
+    checkoutUrl,
     closeCart,
+    beginCheckout,
     incrementItem,
     decrementItem,
     removeItem,
@@ -53,6 +54,43 @@ export function CartDrawer() {
   const discountedSubtotal = Math.max(subtotal - discountAmount, 0);
   const estimatedTotal = discountedSubtotal + shippingPrice;
   const hasApplicableDiscount = discountAmount > 0;
+
+  async function handleCheckoutRedirect() {
+    if (isSyncing) {
+      return;
+    }
+
+    if (checkoutUrl) {
+      closeCart();
+      window.location.assign(checkoutUrl);
+      return;
+    }
+
+    try {
+      const checkout = await beginCheckout({
+        email: "",
+        firstName: "",
+        lastName: "",
+        phone: "",
+        address: "",
+        city: "",
+        postalCode: "",
+        notes: "",
+        deliveryMode: "shipping",
+      });
+
+      closeCart();
+
+      if (checkout.mode === "shopify") {
+        window.location.assign(checkout.checkoutUrl);
+        return;
+      }
+
+      window.location.assign("/checkout");
+    } catch {
+      // The provider already exposes the error in the drawer.
+    }
+  }
 
   useEffect(() => {
     if (!isOpen) {
@@ -286,30 +324,14 @@ export function CartDrawer() {
                     {formatPrice(estimatedTotal, items[0]?.price.currencyCode ?? "EUR")}
                   </span>
                 </div>
-                <p className="mt-4 text-[18px] leading-[1.8] text-brand-dust">
-                  {isDigitalGiftCardOrder
-                    ? "La gift card verra consegnata digitalmente, senza costi di spedizione."
-                    : "Alla spedizione verra sempre applicata la tariffa di 5,00 EUR."}
-                </p>
-
-                <Link
-                  href="/checkout"
-                  onClick={closeCart}
-                  className="mt-5 flex w-full items-center justify-center bg-brand-dark-brown px-5 py-4 text-[13px] uppercase tracking-[0.22em] text-brand-cream no-underline transition-colors hover:bg-brand-tobacco"
+                <button
+                  type="button"
+                  onClick={handleCheckoutRedirect}
+                  disabled={isSyncing}
+                  className="mt-5 flex w-full items-center justify-center bg-brand-dark-brown px-5 py-4 text-[13px] uppercase tracking-[0.22em] text-brand-cream no-underline transition-colors hover:bg-brand-tobacco disabled:cursor-wait disabled:opacity-70"
                 >
-                  {isSyncing
-                    ? "Sincronizzazione..."
-                    : isUsingShopify
-                      ? "Vai al checkout Shopify"
-                      : "Checkout Shopify"}
-                </Link>
-                <Link
-                  href="/collections/abbigliamento"
-                  onClick={closeCart}
-                  className="mt-3 flex w-full items-center justify-center border border-brand-border bg-white px-5 py-4 text-[13px] uppercase tracking-[0.22em] text-brand-dark-brown no-underline transition-colors hover:bg-brand-cream"
-                >
-                  Continua lo shopping
-                </Link>
+                  {isSyncing ? "Preparazione..." : "Vai al checkout"}
+                </button>
               </div>
             </>
           ) : (
